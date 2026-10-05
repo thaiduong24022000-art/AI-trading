@@ -1,0 +1,243 @@
+{
+  "phien_ban": "v20260910_174958_328edec9",
+  "loai": "meta",
+  "dau_van_tay": "328edec91deb2163",
+  "cot_dac_trung": [
+    "mom_6",
+    "mom_24",
+    "mom_72",
+    "atr_pct",
+    "vol_24",
+    "adx",
+    "ema_spread",
+    "gia_tren_ema200",
+    "rsi",
+    "bb_pos",
+    "dc_pos",
+    "vol_ratio",
+    "funding",
+    "funding_ma",
+    "funding_z",
+    "oi_chg_6",
+    "oi_chg_24",
+    "oi_gia_phan_ky",
+    "mom_6_r",
+    "mom_24_r",
+    "mom_72_r",
+    "atr_pct_r",
+    "vol_24_r",
+    "adx_r",
+    "ema_spread_r",
+    "rsi_r",
+    "bb_pos_r",
+    "dc_pos_r",
+    "vol_ratio_r",
+    "funding_r",
+    "funding_z_r",
+    "oi_chg_24_r",
+    "oi_gia_phan_ky_r",
+    "la_mua",
+    "suc_manh_luat",
+    "regime_trend",
+    "regime_range",
+    "regime_bien_dong"
+  ],
+  "max_horizon": 60,
+  "interval": "240",
+  "symbols": [
+    "AAVEUSDT",
+    "ADAUSDT",
+    "ARBUSDT",
+    "AVAXUSDT",
+    "BNBUSDT",
+    "BONKUSDT",
+    "BTCUSDT",
+    "DOGEUSDT",
+    "ETHUSDT",
+    "GRAMUSDT",
+    "INJUSDT",
+    "LINKUSDT",
+    "LTCUSDT",
+    "NEARUSDT",
+    "PEPEUSDT",
+    "SOLUSDT",
+    "SUIUSDT",
+    "SUSHIUSDT",
+    "UNIUSDT",
+    "WLDUSDT",
+    "XRPUSDT",
+    "ZENUSDT"
+  ],
+  "chien_luoc_nguon": [
+    "breakout",
+    "trend_following",
+    "mean_reversion"
+  ],
+  "huan_luyen_luc": "2026-09-10 17:49:58",
+  "tham_so_lgb": {
+    "objective": "binary",
+    "metric": "auc",
+    "learning_rate": 0.03,
+    "num_leaves": 7,
+    "max_depth": 3,
+    "min_child_samples": 80,
+    "feature_fraction": 0.6,
+    "bagging_fraction": 0.7,
+    "bagging_freq": 1,
+    "lambda_l2": 10.0,
+    "verbosity": -1,
+    "num_threads": 0
+  },
+  "tham_so_bai_toan": {
+    "ATR_STOP_MULT": 2.0,
+    "ATR_TP_MULT": 3.0,
+    "FEE_TAKER": 0.001,
+    "SLIPPAGE": 0.0005,
+    "KLINE_INTERVAL": "240"
+  },
+  "chia_khoi": "cua so 0: train[0:10570] embargo[10570:10630] test[10630:11330]",
+  "so_dong": {
+    "train": 12169,
+    "val": 1012,
+    "tong_tin_hieu": 14210,
+    "train_hieu_dung": 5777,
+    "val_hieu_dung": 467,
+    "ngoai_mau": 12169
+  },
+  "bien_do": {
+    "lai": 0.07965575746160695,
+    "lo": -0.06014285217015853,
+    "p_hoa_von": 0.43021066038193756,
+    "ty_le_lai_co_so": 0.41268797764812226,
+    "ky_vong_khong_loc": -0.002449646683205927
+  },
+  "nguong": 0.44021066038193757,
+  "cach_chon_nguong": "hoa_von_ly_thuyet",
+  "chi_so_ngoai_mau": {
+    "so_lenh_giu": 1283,
+    "so_lenh_goc": 12169,
+    "ty_le_giu": 0.10543183499054976,
+    "ky_vong": -6.97849485602098e-05,
+    "ky_vong_khong_loc": -0.002449646683205927,
+    "cai_thien": 0.002379861734645717,
+    "ty_le_thang": 0.4356975837879969,
+    "ty_le_thang_khong_loc": 0.41268797764812226,
+    "profit_factor": 0.997778873043762,
+    "profit_factor_khong_loc": 0.9306493495207612,
+    "tong_loi_nhuan": -0.08953408900274917,
+    "tong_khong_loc": -29.809750487932927,
+    "nguong": 0.44021066038193757,
+    "p_hoa_von": 0.43021066038193756
+  },
+  "chi_so": {
+    "auc": 0.5922230572954558,
+    "p_min": 0.2730494495083662,
+    "p_max": 0.5016855549025077,
+    "p_tb": 0.3921100536484109,
+    "so_lenh_giu": 49,
+    "so_lenh_goc": 1012,
+    "ty_le_giu": 0.04841897233201581,
+    "ky_vong": -0.009520739923875752,
+    "ky_vong_khong_loc": -0.0021054974621631966,
+    "cai_thien": -0.007415242461712556,
+    "ty_le_thang": 0.30612244897959184,
+    "ty_le_thang_khong_loc": 0.4209486166007905,
+    "profit_factor": 0.6577651451131055,
+    "profit_factor_khong_loc": 0.9224953308282164,
+    "tong_loi_nhuan": -0.4665162562699119,
+    "tong_khong_loc": -2.130763431709155,
+    "nguong": 0.44021066038193757,
+    "p_hoa_von": 0.43021066038193756
+  },
+  "chi_so_nhan_xao": {
+    "auc": 0.48587149160253007,
+    "p_min": 0.352572165925992,
+    "p_max": 0.5068676027057297,
+    "p_tb": 0.4130579910088099,
+    "so_lenh_giu": 147,
+    "so_lenh_goc": 1012,
+    "ty_le_giu": 0.14525691699604742,
+    "ky_vong": -0.0026626761600796345,
+    "ky_vong_khong_loc": -0.0021054974621631966,
+    "cai_thien": -0.0005571786979164379,
+    "ty_le_thang": 0.4013605442176871,
+    "ty_le_thang_khong_loc": 0.4209486166007905,
+    "profit_factor": 0.8938599365136535,
+    "profit_factor_khong_loc": 0.9224953308282164,
+    "tong_loi_nhuan": -0.3914133955317063,
+    "tong_khong_loc": -2.130763431709155,
+    "nguong": 0.44021066038193757,
+    "p_hoa_von": 0.43021066038193756
+  },
+  "chi_so_champion_cung_khoi": null,
+  "goc_toan_bo_lich_su": {
+    "lai": 0.07761083429494442,
+    "lo": -0.05885007690761278,
+    "p_hoa_von": 0.43125959213520154,
+    "ty_le_lai_co_so": 0.4131597466572836,
+    "ky_vong_khong_loc": -0.0024699214065421683
+  },
+  "cong_dat": false,
+  "cong_chi_tiet": [
+    "  doi chung nhan xao     0.486          AUC <= 0.58            DAT",
+    "  lenh con lai sau loc   49/1012        >= 30                  DAT",
+    "  ty le giu lai          0.048          trong [0.15, 0.90]     TRUOT",
+    "  AUC                    0.592          trong [0.52, 0.80]     DAT",
+    "  ky vong sau loc        -0.0095        > 0.0005               TRUOT",
+    "  hon 'nghe het'         -0.0095 vs -0.0021 hon >= 0.0020          TRUOT",
+    "  profit factor          0.66 vs 0.92   >= 1.10                TRUOT",
+    "  hon champion           khong co       chua co bo loc nao     BO QUA"
+  ],
+  "tam_quan_trong": [
+    [
+      "rsi",
+      0.07603815978676694
+    ],
+    [
+      "ema_spread",
+      0.0717228744659162
+    ],
+    [
+      "gia_tren_ema200",
+      0.05362543673305838
+    ],
+    [
+      "funding_r",
+      0.05295354700980745
+    ],
+    [
+      "mom_72",
+      0.05112183856768624
+    ],
+    [
+      "oi_chg_24",
+      0.05020162983191901
+    ],
+    [
+      "la_mua",
+      0.04818454345476934
+    ],
+    [
+      "vol_24",
+      0.04696050549495492
+    ],
+    [
+      "funding_ma",
+      0.046776145133896996
+    ],
+    [
+      "adx",
+      0.04635928720441297
+    ],
+    [
+      "vol_ratio",
+      0.04558933576634144
+    ],
+    [
+      "atr_pct",
+      0.03517176995317892
+    ]
+  ],
+  "giay_huan_luyen": 163.2,
+  "luu_luc": 1789037398.4764543
+}

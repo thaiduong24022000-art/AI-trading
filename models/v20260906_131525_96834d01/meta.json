@@ -1,0 +1,252 @@
+{
+  "phien_ban": "v20260906_131525_96834d01",
+  "dau_van_tay": "96834d01deb9028e",
+  "cot_dac_trung": [
+    "mom_6",
+    "mom_24",
+    "mom_72",
+    "atr_pct",
+    "vol_24",
+    "adx",
+    "ema_spread",
+    "gia_tren_ema200",
+    "rsi",
+    "bb_pos",
+    "dc_pos",
+    "vol_ratio",
+    "funding",
+    "funding_ma",
+    "funding_z",
+    "oi_chg_6",
+    "oi_chg_24",
+    "oi_gia_phan_ky",
+    "mom_6_r",
+    "mom_24_r",
+    "mom_72_r",
+    "atr_pct_r",
+    "vol_24_r",
+    "adx_r",
+    "ema_spread_r",
+    "rsi_r",
+    "bb_pos_r",
+    "dc_pos_r",
+    "vol_ratio_r",
+    "funding_r",
+    "funding_z_r",
+    "oi_chg_24_r",
+    "oi_gia_phan_ky_r"
+  ],
+  "max_horizon": 60,
+  "interval": "240",
+  "symbols": [
+    "AAVEUSDT",
+    "ADAUSDT",
+    "ARBUSDT",
+    "AVAXUSDT",
+    "BNBUSDT",
+    "BONKUSDT",
+    "BTCUSDT",
+    "DOGEUSDT",
+    "ETHUSDT",
+    "GRAMUSDT",
+    "INJUSDT",
+    "LINKUSDT",
+    "LTCUSDT",
+    "NEARUSDT",
+    "PEPEUSDT",
+    "SOLUSDT",
+    "SUIUSDT",
+    "SUSHIUSDT",
+    "UNIUSDT",
+    "WLDUSDT",
+    "XRPUSDT",
+    "ZENUSDT"
+  ],
+  "huan_luyen_luc": "2026-09-06 13:15:25",
+  "tham_so_lgb": {
+    "objective": "binary",
+    "metric": "auc",
+    "learning_rate": 0.03,
+    "num_leaves": 15,
+    "max_depth": 4,
+    "min_child_samples": 300,
+    "feature_fraction": 0.7,
+    "bagging_fraction": 0.7,
+    "bagging_freq": 1,
+    "lambda_l2": 5.0,
+    "verbosity": -1,
+    "num_threads": 0
+  },
+  "tham_so_bai_toan": {
+    "ATR_STOP_MULT": 2.0,
+    "ATR_TP_MULT": 3.0,
+    "FEE_TAKER": 0.001,
+    "SLIPPAGE": 0.0005,
+    "KLINE_INTERVAL": "240"
+  },
+  "chia_khoi": "train[0:10010] calib[10070:10570] val[10630:11330]",
+  "so_dong": {
+    "train": 168627,
+    "calib": 10500,
+    "val": 15096,
+    "train_hieu_dung": 8863,
+    "val_hieu_dung": 782
+  },
+  "bien_do": {
+    "lai_long": 0.06113080320967979,
+    "lo_long": -0.0465871466121635,
+    "lai_short": 0.059832874795006964,
+    "lo_short": -0.04632624188610873
+  },
+  "chi_so": {
+    "auc_long": 0.6313831372795361,
+    "auc_short": 0.616676160142482,
+    "ic": 0.07405700388218506,
+    "ic_t": 2.1849880703296987,
+    "ic_t_tho": 7.15047414378279,
+    "so_moc_ic": 699,
+    "so_lenh": 0,
+    "ty_le_vao_lenh": 0.0,
+    "loi_nhuan_tb": 0.0,
+    "ty_le_thang": 0.0,
+    "profit_factor": 0.0,
+    "tong_loi_nhuan": 0.0,
+    "so_lenh_mua": 0,
+    "so_lenh_ban": 0,
+    "auc_tb": 0.6240296487110091
+  },
+  "chi_so_nhan_xao": {
+    "auc_long": 0.48441770268485285,
+    "auc_short": 0.5430980140712557,
+    "ic": -0.0017876650627047055,
+    "ic_t": -0.0733184975897044,
+    "ic_t_tho": -0.18690841446962134,
+    "so_moc_ic": 699,
+    "so_lenh": 0,
+    "ty_le_vao_lenh": 0.0,
+    "loi_nhuan_tb": 0.0,
+    "ty_le_thang": 0.0,
+    "profit_factor": 0.0,
+    "tong_loi_nhuan": 0.0,
+    "so_lenh_mua": 0,
+    "so_lenh_ban": 0,
+    "auc_tb": 0.5137578583780542
+  },
+  "chi_so_champion_cung_khoi": null,
+  "cong_dat": false,
+  "cong_chi_tiet": [
+    "  doi chung nhan xao     0.514          AUC <= 0.55            DAT",
+    "  mau kiem dinh          782            hieu dung >= 300       DAT",
+    "  so moc do IC           699            moc >= 30              DAT",
+    "  AUC trung binh         0.624          trong [0.52, 0.75]     DAT",
+    "  IC cat ngang           0.0741         >= 0.010               DAT",
+    "  t-stat cua IC          2.18           >= 2.0                 DAT",
+    "  so lenh tren val       0              >= 50                  TRUOT",
+    "  ky vong moi lenh       0.0000         > 0.0005 sau phi       TRUOT",
+    "  profit factor          0.00           >= 1.15                TRUOT",
+    "  ty le vao lenh         0.000          <= 0.35                DAT",
+    "  hon champion           khong co       chua co mo hinh nao    BO QUA"
+  ],
+  "tam_quan_trong_long": [
+    [
+      "rsi",
+      0.36547117696917036
+    ],
+    [
+      "bb_pos",
+      0.21654104876793853
+    ],
+    [
+      "ema_spread",
+      0.10240120545032524
+    ],
+    [
+      "funding_ma",
+      0.07421162921052435
+    ],
+    [
+      "dc_pos",
+      0.06235491540739999
+    ],
+    [
+      "gia_tren_ema200",
+      0.0612692391039404
+    ],
+    [
+      "adx",
+      0.04683682942369292
+    ],
+    [
+      "mom_72",
+      0.024589367867794764
+    ],
+    [
+      "atr_pct_r",
+      0.012540415903190492
+    ],
+    [
+      "vol_24",
+      0.011695411215863214
+    ],
+    [
+      "oi_chg_24",
+      0.0072955994408078805
+    ],
+    [
+      "oi_chg_6",
+      0.005949623832083993
+    ]
+  ],
+  "tam_quan_trong_short": [
+    [
+      "dc_pos",
+      0.6188216608140898
+    ],
+    [
+      "ema_spread",
+      0.17439985631986304
+    ],
+    [
+      "funding_r",
+      0.08111954440013999
+    ],
+    [
+      "funding_ma",
+      0.047990642836300605
+    ],
+    [
+      "adx",
+      0.03223434389267687
+    ],
+    [
+      "bb_pos_r",
+      0.016331575033217027
+    ],
+    [
+      "atr_pct",
+      0.014841289309491624
+    ],
+    [
+      "oi_chg_24",
+      0.014261087394220993
+    ],
+    [
+      "mom_6",
+      0.0
+    ],
+    [
+      "mom_24",
+      0.0
+    ],
+    [
+      "mom_72",
+      0.0
+    ],
+    [
+      "vol_24",
+      0.0
+    ]
+  ],
+  "giay_huan_luyen": 10.7,
+  "luu_luc": 1788675325.8192205
+}

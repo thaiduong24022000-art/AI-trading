@@ -1,0 +1,1830 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Trade Bot — Bảng điều khiển</title>
+<style>
+:root{--bg:#faf9f7;--card:#fff;--fg:#1a1a19;--fg2:#5f5e5a;--fg3:#888780;--line:#e5e3dd;
+--pos:#1D9E75;--neg:#D85A30;--accent:#534AB7;--accent-bg:#EEEDFE;--warn:#BA7517;
+--warn-bg:#FDF4E3;--console:#1c1c20;--console-fg:#d8d6d0}
+@media (prefers-color-scheme:dark){:root{--bg:#17171a;--card:#1f1f23;--fg:#f0efec;
+--fg2:#a8a7a1;--fg3:#78776f;--line:#33333a;--pos:#5DCAA5;--neg:#F0997B;
+--accent:#AFA9EC;--accent-bg:#26215C;--warn:#FAC775;--warn-bg:#3A2E15;--console:#101013}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:400 15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1340px;margin:0 auto;padding:20px 20px 60px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+h1{font-size:21px;font-weight:500;margin:0}
+h2{font-size:15px;font-weight:500;margin:0 0 12px}
+h3{font-size:13px;font-weight:500;margin:22px 0 8px;color:var(--fg2)}
+.pill{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--accent-bg);
+color:var(--accent);border:1px solid transparent;white-space:nowrap}
+.pill.warn{background:transparent;color:var(--warn);border-color:var(--warn)}
+.pill.dang{background:transparent;color:var(--pos);border-color:var(--pos)}
+.sub{color:var(--fg2);font-size:13px;margin:0 0 18px}
+
+/* dieu huong chinh */
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;border-bottom:1px solid var(--line)}
+nav button{background:none;border:none;padding:10px 15px;font:inherit;font-size:14px;
+color:var(--fg2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
+nav button:hover{color:var(--fg)}
+.khu{display:none}.khu.on{display:block}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card .k{color:var(--fg3);font-size:12px;margin-bottom:3px}
+.card .v{font-size:19px;font-weight:500;font-variant-numeric:tabular-nums}
+.card .v.sm{font-size:15px}
+.grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:18px;align-items:start}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:960px){.grid,.grid2{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.panel.flush{padding:0;overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{flex:0 0 auto;background:none;border:none;padding:11px 14px;font:inherit;
+font-size:14px;color:var(--fg2);cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--accent);border-bottom-color:var(--accent)}
+.pane{padding:17px;display:none}.pane.on{display:block}
+
+label{display:block;font-size:13px;color:var(--fg2);margin:12px 0 5px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;padding:8px 11px;font:inherit;font-size:14px;background:var(--bg);
+color:var(--fg);border:1px solid var(--line);border-radius:8px}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+input.sai{border-color:var(--neg)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:14px;color:var(--fg2)}
+.check input{width:auto}
+button.go{width:100%;margin-top:16px;padding:10px;font:inherit;font-size:14px;font-weight:500;
+background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer}
+button.go:disabled{opacity:.45;cursor:not-allowed}
+button.stop{background:var(--neg)}
+button.nho{width:auto;margin:0;padding:5px 12px;font-size:13px}
+button.phu{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.hint{font-size:12px;color:var(--fg3);margin-top:9px;line-height:1.5}
+.console{background:var(--console);color:var(--console-fg);border-radius:12px;padding:14px 16px;
+font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;height:480px;overflow-y:auto;
+white-space:pre-wrap;word-break:break-word}
+.console.thap{height:300px}
+.console .cmd{color:#AFA9EC}.console .err{color:#F0997B}.console .ok{color:#5DCAA5}
+.console .note{color:#FAC775}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;color:var(--fg2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--fg3);flex:0 0 auto}
+.dot.run{background:var(--warn);animation:pulse 1.2s infinite}
+.dot.ok{background:var(--pos)}.dot.err{background:var(--neg)}
+@keyframes pulse{50%{opacity:.3}}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{text-align:right;font-weight:500;color:var(--fg3);font-size:12px;padding:7px 10px;
+border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right}
+tr:last-child td{border-bottom:none}
+tr.chon{background:var(--accent-bg)}
+.cuon{max-height:440px;overflow-y:auto}
+a{color:var(--accent)}
+.empty{color:var(--fg3);font-size:14px;padding:18px;text-align:center;line-height:1.7}
+.note{border-left:3px solid var(--accent);background:var(--card);border-radius:8px;
+padding:12px 15px;font-size:13px;color:var(--fg2);margin-top:16px}
+.note.canh{border-left-color:var(--warn);background:var(--warn-bg)}
+.note b{color:var(--fg);font-weight:500}
+.tot{color:var(--pos)}.xau{color:var(--neg)}.canhbao{color:var(--warn)}
+code{font:13px ui-monospace,Consolas,monospace;background:var(--bg);padding:1px 5px;
+border-radius:4px;border:1px solid var(--line)}
+.md{font-size:13.5px;line-height:1.7}
+.md h1{font-size:17px;margin:0 0 10px}.md h2{font-size:14px;margin:20px 0 8px}
+.md table{margin:10px 0}.md code{font-size:12px}
+.md pre{background:var(--console);color:var(--console-fg);padding:12px 14px;border-radius:8px;
+overflow-x:auto;font:12px/1.5 ui-monospace,Consolas,monospace}
+.md ul{padding-left:20px;margin:8px 0}
+.taghop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.viec{display:flex;gap:11px;align-items:flex-start;padding:11px 0;
+border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.65}
+.viec:last-child{border-bottom:none}
+.viec .stt{flex:0 0 20px;height:20px;border-radius:50%;background:var(--accent-bg);
+color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;
+justify-content:center;margin-top:2px}
+.viec.gap .stt{background:transparent;color:var(--neg);border:1px solid var(--neg)}
+.viec .noi{flex:1;min-width:0}
+.viec button{margin-top:7px}
+.phu-de{color:var(--fg3);font-size:12.5px;margin:-8px 0 15px;line-height:1.55}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);
+padding:22px;max-width:560px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.luoi-cfg{display:grid;grid-template-columns:200px 1fr;gap:10px 14px;align-items:center}
+@media(max-width:700px){.luoi-cfg{grid-template-columns:1fr}}
+.luoi-cfg .ten{font-size:13px}
+.luoi-cfg .ten small{display:block;color:var(--fg3);font-size:11.5px;line-height:1.4}
+.nhom-khoa{margin-bottom:14px}
+.nhom-khoa h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--fg3);font-weight:600;margin:0 0 8px}
+.nhom-khoa.dang-dung h3{color:var(--accent)}
+.hang-khoa{display:grid;grid-template-columns:1fr 1.4fr auto;gap:8px;
+  align-items:center;margin-bottom:6px}
+@media(max-width:700px){.hang-khoa{grid-template-columns:1fr}}
+.hang-khoa label{font-size:12.5px;display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.hang-khoa label span{font-size:11px}
+.hang-khoa input{width:100%}
+.hang-khoa button.phu{width:auto;margin:0;padding:5px 10px;font-size:12px}
+.the-san{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+button.san{flex:1;min-width:150px;display:flex;flex-direction:column;align-items:flex-start;
+  gap:3px;padding:12px 14px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;font:inherit;color:var(--fg);cursor:pointer;text-align:left}
+button.san:hover{border-color:var(--accent)}
+button.san.on{border-color:var(--accent);background:var(--accent-bg)}
+button.san b{font-size:15px}
+button.san span{font-size:11.5px}
+button.san .mo{color:var(--fg3)}
+.luoi-san{display:grid;grid-template-columns:130px 1fr;gap:9px 14px;align-items:center;font-size:13px}
+@media(max-width:700px){.luoi-san{grid-template-columns:1fr}}
+.luoi-san .ten{color:var(--fg3);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>AI Trade Bot</h1>
+  <span class="pill" id="p-san">…</span>
+  <span class="pill" id="p-net">…</span>
+  <span class="pill" id="p-dry">…</span>
+  <span class="pill" id="p-cat">…</span>
+  <span class="pill" id="p-policy">…</span>
+  <span class="pill" id="p-bot" style="display:none">…</span>
+</header>
+<p class="sub">Bảng điều khiển chạy trên máy bạn (chỉ 127.0.0.1). Khoá API
+<b>đặt được</b> ở tab Cấu hình nhưng không đọc lại được — đi vào <code>.env</code> thì đi một chiều.</p>
+
+<nav>
+  <button class="on" data-khu="tongquan">Tổng quan</button>
+  <button data-khu="bot">Bot</button>
+  <button data-khu="policy">AI Policy</button>
+  <button data-khu="boloc">Bộ lọc</button>
+  <button data-khu="dulieu">Dữ liệu</button>
+  <button data-khu="kiemdinh">Kiểm định</button>
+  <button data-khu="lab">Strategy Lab</button>
+  <button data-khu="theodoi">Theo dõi</button>
+  <button data-khu="cauhinh">Cấu hình</button>
+</nav>
+
+<!-- ============ TỔNG QUAN ============ -->
+<p class="phu-de" id="phu-de"></p>
+
+<div class="khu on" id="khu-tongquan">
+  <div id="tq-chan"></div>
+  <div class="cards" id="cards"></div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Trạng thái các bộ phận</h2>
+      <div id="tq-trangthai"><p class="empty">Đang tải…</p></div>
+    </div>
+    <div class="panel">
+      <h2>Việc nên làm tiếp</h2>
+      <div id="tq-viec"><p class="empty">Đang tải…</p></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <h2>Nhật ký bot (logs/bot.log)</h2>
+    <div class="console thap" id="tq-log">Đang tải…</div>
+  </div>
+</div>
+
+<!-- ============ BOT ============ -->
+<div class="khu" id="khu-bot">
+  <div class="grid">
+    <div class="panel">
+      <h2>Điều khiển bot</h2>
+      <div id="bot-trangthai"></div>
+      <div class="check"><input type="checkbox" id="bot-once">
+        <label for="bot-once" style="margin:0">Chạy một vòng rồi thoát (<code>--once</code>)</label></div>
+      <div class="taghop">
+        <button class="go nho" id="bot-start">Bật bot</button>
+        <button class="go nho stop" id="bot-stop">Dừng bot</button>
+      </div>
+      <p class="hint">Bot đọc <code>.env</code> lúc khởi động. Sửa cấu hình xong phải
+      dừng và bật lại thì mới có hiệu lực.</p>
+      <div class="note canh"><b>Chế độ tiền thật cần gõ xác nhận.</b>
+      Ở dry-run hoặc testnet thì bấm một nút. Nếu <code>DRY_RUN=false</code> và
+      cờ testnet/demo của sàn đang dùng cũng <code>false</code> thì phải gõ đúng một
+      câu xác nhận — khác biệt giữa hai trường hợp này là khác biệt giữa một lần
+      bấm nhầm và một khoản lỗ thật.</div>
+    </div>
+
+    <div class="panel" style="grid-column:1/-1">
+      <h2>Trạng thái bên trong bot</h2>
+      <div id="bot-noitai"><p class="empty">Bot chưa ghi nhịp tim nào.</p></div>
+      <div class="taghop">
+        <button class="go nho phu" data-lenh="reset_breaker">Reset circuit breaker</button>
+        <button class="go nho phu" data-lenh="nap_lai_kho_luat">Nạp lại chiến lược bóng</button>
+        <span id="lenh-kq" style="font-size:13px"></span>
+      </div>
+      <p class="hint">Trạng thái này bot tự ghi vào DB mỗi vòng — khác với "tiến trình
+      còn sống không". Circuit breaker nằm trong bộ nhớ bot nên web không sửa trực tiếp
+      được; nút trên <b>xếp một lệnh</b> để bot đọc ở vòng kế tiếp. Lệnh hết hạn sau
+      10 phút: bot tắt vài ngày rồi bật lại không nên thi hành một lệnh cũ.</p>
+    </div>
+    <div>
+      <div class="bar">
+        <span class="dot" id="bot-dot"></span>
+        <span id="bot-label">Bot chưa chạy</span>
+        <span style="margin-left:auto" id="bot-time"></span>
+      </div>
+      <div class="console" id="bot-console">Bấm "Bật bot" để chạy. Log hiện ra ở đây.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ AI POLICY ============ -->
+<div class="khu" id="khu-policy">
+  <div class="cards" id="policy-cards"></div>
+  <div class="grid">
+    <div class="panel flush">
+      <div class="tabs">
+        <button class="on" data-tab="hoc">Vòng học</button>
+        <button data-tab="quanly">Quản lý</button>
+        <button data-tab="dudoan">Dự đoán</button>
+      </div>
+      <div class="pane on" id="pane-hoc">
+        <label>Mã (bỏ trống = mọi mã có cache)</label>
+        <input id="hoc-symbols" placeholder="BTCUSDT,ETHUSDT,…">
+        <div class="row">
+          <div><label>max_horizon (nến)</label><input id="hoc-horizon" type="number" value="60"></div>
+          <div><label>seed</label><input id="hoc-seed" type="number" value="0"></div>
+        </div>
+        <div class="check"><input type="checkbox" id="hoc-nodev">
+          <label for="hoc-nodev" style="margin:0">Bỏ funding + open interest</label></div>
+        <button class="go" data-run="hoc">Chạy một vòng học</button>
+        <p class="hint">Huấn luyện challenger → chấm cổng thống kê → chỉ thăng cấp khi
+        qua <b>tất cả</b> điều kiện. Kết quả "từ chối" là bình thường và thường là đúng.</p>
+        <button class="go phu" data-run="theo-doi">Điền kết quả thật + kiểm tra hạ cấp</button>
+        <p class="hint">Điền kết quả triple-barrier cho các dự đoán đã đủ già, rồi so
+        kết quả thật của champion với chính số liệu kiểm định của nó.</p>
+      </div>
+      <div class="pane" id="pane-quanly">
+        <div id="policy-champion"></div>
+        <h3>Đổi chế độ</h3>
+        <select id="policy-mode">
+          <option value="off">off — không nạp mô hình</option>
+          <option value="shadow">shadow — chỉ ghi sổ, không đụng lệnh</option>
+          <option value="filter">filter — chỉ được chặn hoặc giảm quy mô</option>
+          <option value="active">active — thành viên bình thường của ensemble</option>
+        </select>
+        <button class="go" id="policy-mode-luu">Lưu chế độ vào .env</button>
+        <p class="hint">Mô hình mới <b>luôn</b> bắt đầu ở shadow. Vòng học được đổi
+        champion trong một chế độ; nó không bao giờ tự nâng chế độ lên.</p>
+        <h3>Hạ cấp champion</h3>
+        <input id="policy-lydo" placeholder="lý do (ghi vào nhật ký sự kiện)">
+        <button class="go stop" id="policy-hacap">Lùi champion một bước</button>
+        <p class="hint">Lùi về phiên bản trước, hoặc về <b>không có mô hình nào</b> —
+        lúc đó bot vẫn chạy bình thường bằng chiến lược luật.</p>
+      </div>
+      <div class="pane" id="pane-dudoan">
+        <div id="policy-dudoan"><p class="empty">Đang tải…</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="panel flush">
+        <div class="tabs">
+          <button class="on" data-ptab="phienban">Phiên bản</button>
+          <button data-ptab="the">Thẻ mô hình</button>
+          <button data-ptab="sukien">Sự kiện</button>
+          <button data-ptab="console">Bảng chạy</button>
+        </div>
+        <div class="pane on" id="ppane-phienban"><div id="policy-bang"></div></div>
+        <div class="pane" id="ppane-the"><div class="md" id="policy-the">
+          <p class="empty">Chọn một phiên bản ở tab "Phiên bản" để đọc thẻ mô hình.</p></div></div>
+        <div class="pane" id="ppane-sukien"><div id="policy-sukien"></div></div>
+        <div class="pane" id="ppane-console">
+          <div class="bar"><span class="dot" id="dot"></span>
+            <span id="job-label">Chưa chạy tác vụ nào</span>
+            <span style="margin-left:auto" id="job-time"></span>
+            <button class="go stop nho" id="btn-stop" style="display:none">Dừng</button></div>
+          <div class="console" id="console">Chọn một tác vụ rồi bấm chạy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BỘ LỌC META ============ -->
+<div class="khu" id="khu-boloc">
+  <div class="cards" id="meta-cards"></div>
+  <div class="note" id="meta-giai-thich"></div>
+  <div class="grid" style="margin-top:16px">
+    <div class="panel flush">
+      <div class="tabs">
+        <button class="on" data-mtab="hoc">Huấn luyện</button>
+        <button data-mtab="quet">Độ ổn định</button>
+        <button data-mtab="quanly">Quản lý</button>
+      </div>
+      <div class="pane on" id="mpane-hoc">
+        <label>Chiến lược nguồn</label>
+        <input id="mt-cl" placeholder="breakout">
+        <label>Mã (trống = mọi mã có cache)</label>
+        <input id="mt-syms" placeholder="BTCUSDT,ETHUSDT,…">
+        <div class="row">
+          <div><label>max_horizon</label><input id="mt-hz" type="number" value="60"></div>
+          <div><label>seed</label><input id="mt-seed" type="number" value="0"></div>
+        </div>
+        <button class="go" data-run="meta-hoc">Huấn luyện một bộ lọc</button>
+        <p class="hint">Bộ lọc học trên tín hiệu mà chiến lược luật <b>đã phát ra</b>,
+        không phải trên mọi nến. Tỷ lệ cơ sở cao hơn 3.3 điểm chỉ vì đứng yên
+        cho tới khi luật lên tiếng.</p>
+      </div>
+      <div class="pane" id="mpane-quet">
+        <div class="row">
+          <div><label>Số cửa sổ</label><input id="mq-cs" type="number" value="6"></div>
+          <div><label>Nến mỗi cửa sổ</label><input id="mq-vb" type="number" value="700"></div>
+        </div>
+        <label>Seed (cách nhau dấu phẩy)</label><input id="mq-seeds" value="0,1,2">
+        <button class="go" data-run="meta-quet">Quét độ ổn định</button>
+        <p class="hint"><b>Chạy cái này trước khi tin bất kỳ kết quả huấn luyện nào.</b>
+        Một lần huấn luyện chấm điểm trên một cửa sổ, tức một chế độ thị trường.
+        Nếu lợi thế chỉ xuất hiện ở vài cửa sổ thì cái đang nhìn là phương sai.</p>
+      </div>
+      <div class="pane" id="mpane-quanly">
+        <div id="meta-champion"></div>
+        <h3>Hạ cấp bộ lọc</h3>
+        <input id="meta-lydo" placeholder="lý do (ghi vào nhật ký sự kiện)">
+        <button class="go stop" id="meta-hacap">Lùi champion một bước</button>
+        <p class="hint">Lùi về phiên bản trước, hoặc về <b>không có bộ lọc nào</b> —
+        lúc đó tín hiệu của chiến lược luật đi tiếp nguyên vẹn.</p>
+      </div>
+    </div>
+    <div>
+      <div class="panel flush">
+        <div class="tabs">
+          <button class="on" data-mptab="phienban">Phiên bản</button>
+          <button data-mptab="the">Thẻ bộ lọc</button>
+          <button data-mptab="sukien">Sự kiện</button>
+          <button data-mptab="console">Bảng chạy</button>
+        </div>
+        <div class="pane on" id="mppane-phienban"><div id="meta-bang"></div></div>
+        <div class="pane" id="mppane-the"><div class="md" id="meta-the">
+          <p class="empty">Chọn một phiên bản để đọc thẻ.</p></div></div>
+        <div class="pane" id="mppane-sukien"><div id="meta-sukien"></div></div>
+        <div class="pane" id="mppane-console">
+          <div class="bar"><span class="dot" id="dot4"></span>
+            <span id="job-label4">Chưa chạy tác vụ nào</span>
+            <span style="margin-left:auto" id="job-time4"></span></div>
+          <div class="console" id="console4">Chọn một tác vụ rồi bấm chạy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DỮ LIỆU ============ -->
+<div class="khu" id="khu-dulieu">
+  <div class="grid">
+    <div class="panel flush">
+      <div class="tabs">
+        <button class="on" data-dtab="tai">Tải nến</button>
+        <button data-dtab="ro">Rổ mã</button>
+        <button data-dtab="deriv">Funding/OI</button>
+        <button data-dtab="solenh">Sổ lệnh</button>
+      </div>
+      <div class="pane on" id="dpane-tai">
+        <label>Mã</label><input id="dl-symbol" value="BTCUSDT">
+        <label>Số nến</label><input id="dl-bars" type="number" value="8000">
+        <button class="go" data-run="download">Tải về cache</button>
+        <p class="hint">Nến là dữ liệu công khai — <b>không cần API key</b>.
+        Luôn tải từ mainnet kể cả khi giao dịch trên testnet.</p>
+      </div>
+      <div class="pane" id="dpane-ro">
+        <div class="row">
+          <div><label>Số mã top</label><input id="ro-top" type="number" value="25"></div>
+          <div><label>Khung (phút)</label><input id="ro-interval" type="number" value="240"></div>
+        </div>
+        <button class="go" data-run="tai-universe">Tải rổ mã thanh khoản cao</button>
+        <p class="hint">Xếp hạng theo khối lượng rồi tải hàng loạt. Đặc trưng xếp hạng
+        cắt ngang cần bề rộng — càng nhiều mã càng có nghĩa.</p>
+      </div>
+      <div class="pane" id="dpane-deriv">
+        <label>Mã (bỏ trống = mọi mã có cache)</label>
+        <input id="dv-symbols" placeholder="BTCUSDT,ETHUSDT,…">
+        <label>Khung (phút)</label><input id="dv-interval" type="number" value="240">
+        <button class="go" data-run="tai-phai-sinh">Tải funding + open interest</button>
+        <p class="hint">Dữ liệu vị thế — thứ mà OHLCV không nhìn thấy. Đã đo: thêm hai
+        nguồn này IC vẫn ~0, nhưng chúng vẫn nằm trong bộ đặc trưng.</p>
+      </div>
+      <div class="pane" id="dpane-solenh">
+        <div id="ob-trangthai"></div>
+        <label>Mã</label><input id="ob-symbols"
+          value="BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,DOGEUSDT,BNBUSDT,LINKUSDT,AVAXUSDT">
+        <div class="row">
+          <div><label>Độ sâu</label><select id="ob-depth">
+            <option value="1">1</option><option value="50" selected>50</option>
+            <option value="200">200</option></select></div>
+          <div><label>Loại</label><select id="ob-cat">
+            <option value="linear" selected>linear</option><option value="spot">spot</option>
+          </select></div>
+        </div>
+        <div class="taghop">
+          <button class="go nho" id="ob-start">Bật thu thập</button>
+          <button class="go nho stop" id="ob-stop">Dừng</button>
+        </div>
+        <p class="hint">Sổ lệnh là nguồn dữ liệu duy nhất <b>không tải lại được</b> —
+        không thu hôm nay thì vĩnh viễn không có dữ liệu của hôm nay.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Cache hiện có</h2>
+      <div class="cuon" id="cache-bang"><p class="empty">Đang tải…</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KIỂM ĐỊNH ============ -->
+<div class="khu" id="khu-kiemdinh">
+  <div class="grid">
+    <div class="panel flush">
+      <div class="tabs">
+        <button class="on" data-ktab="backtest">Backtest</button>
+        <button data-ktab="walkforward">Walk-forward</button>
+      </div>
+      <div class="pane on" id="kpane-backtest">
+        <label>Mã</label><input id="bt-symbol" value="BTCUSDT">
+        <div class="row">
+          <div><label>Chiến lược</label>
+            <select id="bt-strategy">
+              <option value="all">Cả ba (ensemble)</option>
+              <option value="trend_following">trend_following</option>
+              <option value="mean_reversion">mean_reversion</option>
+              <option value="breakout">breakout</option>
+            </select></div>
+          <div><label>Vốn ban đầu</label><input id="bt-equity" type="number" value="10000"></div>
+        </div>
+        <div class="check"><input type="checkbox" id="bt-synth">
+          <label for="bt-synth" style="margin:0">Dữ liệu ngẫu nhiên (chỉ để thử code)</label></div>
+        <div class="check"><input type="checkbox" id="bt-noregime">
+          <label for="bt-noregime" style="margin:0">Bỏ chuyển đổi theo regime</label></div>
+        <button class="go" data-run="backtest">Chạy backtest</button>
+        <p class="hint">Chạy một lần trên toàn bộ dữ liệu. Cho biết hệ thống có chạy
+        đúng không — <b>không</b> đủ để kết luận chiến lược có lãi.</p>
+      </div>
+      <div class="pane" id="kpane-walkforward">
+        <label>Mã</label><input id="wf-symbol" value="BTCUSDT">
+        <label>Chiến lược</label>
+        <select id="wf-strategy">
+          <option value="all">Cả ba, chạy lần lượt</option>
+          <option value="trend_following">trend_following</option>
+          <option value="mean_reversion">mean_reversion</option>
+          <option value="breakout">breakout</option>
+        </select>
+        <div class="row">
+          <div><label>Nến train</label><input id="wf-train" type="number" value="4320"></div>
+          <div><label>Nến test</label><input id="wf-test" type="number" value="1440"></div>
+        </div>
+        <label>Bước trượt cửa sổ</label><input id="wf-step" type="number" value="1440">
+        <button class="go" data-run="walkforward">Chạy walk-forward</button>
+        <p class="hint">Tối ưu trên train, kiểm định trên test chưa từng thấy.
+        <b>Đây là con số duy nhất đáng tin.</b> Cả ba có thể mất 30–60 phút.</p>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h2>Nghiên cứu</h2>
+        <label>Mã (trống = mọi mã có cache)</label>
+        <input id="nc-symbols" placeholder="BTCUSDT,ETHUSDT,…">
+        <label>Khung (phút)</label>
+        <input id="nc-interval" type="number" value="240" min="1" max="1440">
+        <button class="go phu" data-run="ic-study">Đo Information Coefficient</button>
+        <p class="hint">Câu hỏi chặn trên: dữ liệu đầu vào có chứa tín hiệu không?
+        IC ~ 0 nghĩa là mọi kiến trúc mô hình trên bộ đặc trưng này đều vô vọng,
+        và việc phải làm là <b>mở rộng đầu vào</b> chứ không phải làm mô hình to hơn.</p>
+        <button class="go phu" data-run="quet-hang-rao">Quét hàng rào × chi phí</button>
+        <label style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px">
+          <input type="checkbox" id="nc-nhanh" style="width:auto"> Chạy nhanh (2 hình học × 2 mức phí)
+        </label>
+        <p class="hint">Nhãn nào đáng học: quét các cặp chốt lời/cắt lỗ trên nhiều mức
+        chi phí. Một biên độ chỉ dương ở mức phí 0 là biên độ không tồn tại —
+        cái quét này cho thấy nó tắt ở đâu.</p>
+        <button class="go phu" data-run="phase0">Phase 0 — quét chiến lược gốc</button>
+        <p class="hint">Chạy ba chiến lược gốc với tham số mặc định trên nhiều mã và
+        khung. Không tinh chỉnh tham số — không có tìm kiếm thì không có overfit
+        từ tìm kiếm.</p>
+      </div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:16px">
+        <h2>Báo cáo đã sinh</h2>
+        <div class="cuon" style="max-height:200px" id="reports-body"><p class="empty">Đang tải…</p></div>
+      </div>
+      <div class="bar"><span class="dot" id="dot2"></span>
+        <span id="job-label2">Chưa chạy tác vụ nào</span>
+        <span style="margin-left:auto" id="job-time2"></span></div>
+      <div class="console" id="console2" style="height:340px">Chọn một tác vụ rồi bấm chạy.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STRATEGY LAB ============ -->
+<div class="khu" id="khu-lab">
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h2>1 · Sinh giả thuyết</h2>
+        <label>Số lượng</label>
+        <input id="lab-soluong" type="number" value="10" min="1" max="30">
+        <button class="go" data-run="lab-sinh">Nhờ LLM sinh giả thuyết</button>
+        <p class="hint">Cần <code>ANTHROPIC_API_KEY</code>. Kết quả <b>ghi đè</b> ô soạn
+        bên phải — đọc lại trước khi kiểm định, vì mỗi giả thuyết tốn một phép thử
+        vĩnh viễn.</p>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h2>2 · Kiểm định</h2>
+        <label>Mã (trống = SYMBOLS trong .env)</label>
+        <input id="lab-symbols" placeholder="BTCUSDT,ETHUSDT,SOLUSDT">
+        <label>Khung (phút)</label>
+        <input id="lab-interval" type="number" value="240" min="1" max="1440">
+        <button class="go" id="lab-chay" data-run="lab-kiem-dinh">Kiểm định giả thuyết</button>
+        <div class="note canh" style="margin-top:14px">
+          <b>Mỗi lần chạy cộng vĩnh viễn vào bộ đếm phép thử.</b>
+          Đã thử <b id="lab-bodem">—</b> giả thuyết luỹ kế; ngưỡng Sharpe đòi hỏi
+          tăng theo con số đó. Bộ đếm không bao giờ reset — nếu nó reset được thì
+          chỉ cần chạy nhiều lần với ít ý tưởng là vô hiệu hoá toàn bộ hiệu chỉnh.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:16px">
+        <h2>Giả thuyết <span class="pill" id="lab-so">—</span></h2>
+        <textarea id="lab-json" rows="12" spellcheck="false"
+          style="font:12.5px/1.6 ui-monospace,Consolas,monospace;resize:vertical"></textarea>
+        <div class="taghop">
+          <button class="go nho" id="lab-luu">Lưu giả thuyết</button>
+          <span id="lab-luu-kq" style="font-size:13px"></span>
+        </div>
+        <p class="hint">Kiểm tra bằng đúng bộ kiểm tra mà lab dùng — spec hỏng bị bắt
+        ngay lúc soạn, không tốn phép thử. Cột và toán tử hợp lệ:
+        xem <code>src/strategies/rule_spec.py</code>.</p>
+      </div>
+
+      <div class="panel" style="margin-bottom:16px">
+        <h2>Kết quả lần chạy gần nhất</h2>
+        <div id="lab-ketqua"><p class="empty">Chưa chạy lần nào.</p></div>
+      </div>
+
+      <div class="bar"><span class="dot" id="dot3"></span>
+        <span id="job-label3">Chưa chạy tác vụ nào</span>
+        <span style="margin-left:auto" id="job-time3"></span></div>
+      <div class="console" id="console3" style="height:260px">Chọn một tác vụ rồi bấm chạy.</div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h2>3 · Kho luật — đường đi tới bản live</h2>
+    <div id="lab-kholuat"><p class="empty">Đang tải…</p></div>
+  </div>
+</div>
+
+<!-- ============ THEO DÕI ============ -->
+<div class="khu" id="khu-theodoi">
+  <div class="panel flush">
+    <div class="tabs">
+      <button class="on" data-ttab="trades">Lệnh đã đóng</button>
+      <button data-ttab="decisions">Quyết định</button>
+      <button data-ttab="orders">Lệnh đã gửi</button>
+      <button data-ttab="equity">Vốn</button>
+      <button data-ttab="jobs">Lịch sử tác vụ</button>
+    </div>
+    <div class="pane on" id="tpane-trades"><div id="td-trades"></div></div>
+    <div class="pane" id="tpane-decisions"><div id="td-decisions"></div></div>
+    <div class="pane" id="tpane-orders"><div id="td-orders"></div></div>
+    <div class="pane" id="tpane-equity"><div id="td-equity"></div></div>
+    <div class="pane" id="tpane-jobs"><div id="td-jobs"></div></div>
+  </div>
+</div>
+
+<!-- ============ CẤU HÌNH ============ -->
+<div class="khu" id="khu-cauhinh">
+  <div class="panel" style="margin-bottom:16px">
+    <h2>Sàn giao dịch</h2>
+    <div id="san-chon"><p class="empty">Đang tải…</p></div>
+    <div id="san-thongbao"></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Sửa .env</h2>
+      <div id="cfg-bang"><p class="empty">Đang tải…</p></div>
+      <button class="go" id="cfg-luu">Lưu thay đổi</button>
+      <div id="cfg-ketqua"></div>
+    </div>
+    <div>
+      <div class="panel">
+        <h2>Khoá API</h2>
+        <div id="cfg-bimat"></div>
+        <div id="bm-ketqua"></div>
+        <div class="note"><b>Gõ vào được, đọc lại thì không.</b>
+        Khoá đi một chiều từ đây vào <code>.env</code>. Không nút nào, không route nào
+        lấy giá trị ra được — kể cả tôi. Muốn đối chiếu thì mở <code>.env</code> bằng
+        trình soạn thảo. Để trống rồi Lưu là <b>xoá</b> khoá đó.</div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h2>Thử kết nối sàn</h2>
+        <button class="go" id="san-thu">Thử ngay</button>
+        <div id="san-ketqua"></div>
+        <p class="hint">Dùng đúng giá trị đang có trong <code>.env</code> ngay lúc bấm,
+        nên vừa lưu khoá xong là thử được luôn — không cần khởi động lại.</p>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h2>Chỉ số chỉ đọc</h2>
+        <div id="cfg-chidoc"></div>
+        <p class="hint">Sửa trong <code>config.py</code>. Chúng ảnh hưởng tới cách tính
+        toán chứ không phải cách vận hành, nên không mở ra giao diện.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<dialog id="hopthoai">
+  <h2 id="ht-tieude">Xác nhận</h2>
+  <div id="ht-noidung"></div>
+  <input id="ht-input" style="margin-top:14px;display:none">
+  <div class="taghop" style="margin-top:18px;justify-content:flex-end">
+    <button class="go nho phu" id="ht-huy">Huỷ</button>
+    <button class="go nho stop" id="ht-ok">Xác nhận</button>
+  </div>
+</dialog>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+let jobId = null, seen = 0, poller = null;
+let botSeen = 0, tt = null, policyData = null;
+
+const so = (v, n = 4) => (v === null || v === undefined || Number.isNaN(v))
+  ? '—' : Number(v).toFixed(n);
+const esc = s => String(s ?? '').replace(/[&<>"]/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const gio = ts => ts ? new Date(ts * 1000).toLocaleString('vi') : '—';
+
+/* ---------- điều hướng ---------- */
+const PHU_DE = {
+  tongquan: 'Cái gì đang chạy, cái gì đang chặn, và việc nên làm tiếp.',
+  bot: 'Bật/tắt vòng lặp giao dịch và đọc log của nó theo thời gian thực.',
+  policy: 'Lớp học máy <b>tự sinh tín hiệu</b>: hỏi "nến này nên mua hay bán". ' +
+          'Chạy song song với chiến lược luật, mặc định tắt.',
+  boloc: 'Lớp học máy <b>lọc tín hiệu có sẵn</b>: hỏi "chiến lược luật vừa lên ' +
+         'tiếng, có nên nghe không". Chỉ được chặn hoặc giảm, không tự tạo lệnh.',
+  dulieu: 'Tải nến, funding/OI, và thu thập sổ lệnh — nguồn duy nhất không tải lại được.',
+  kiemdinh: 'Backtest và walk-forward. Chỉ số walk-forward mới là số đáng tin.',
+  lab: 'Sinh giả thuyết chiến lược bằng LLM, kiểm định, rồi đưa vào kho luật.',
+  theodoi: 'Lệnh đã đóng, quyết định đã ghi, đường vốn, lịch sử tác vụ.',
+  cauhinh: 'Sửa <code>.env</code>, chọn sàn, dán khoá API, thử kết nối.',
+};
+
+function veP4huDe(ten) {
+  const el = $('#phu-de');
+  el.innerHTML = PHU_DE[ten] || '';
+  el.style.display = PHU_DE[ten] ? 'block' : 'none';
+}
+
+$$('nav button').forEach(b => b.onclick = () => {
+  $$('nav button').forEach(x => x.classList.remove('on'));
+  $$('.khu').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  $('#khu-' + b.dataset.khu).classList.add('on');
+  veP4huDe(b.dataset.khu);
+  if (b.dataset.khu === 'policy') loadPolicy();
+  if (b.dataset.khu === 'boloc') loadMeta();
+  if (b.dataset.khu === 'theodoi') loadMonitor();
+  if (b.dataset.khu === 'cauhinh') { loadSan(); loadConfig(); }
+  if (b.dataset.khu === 'kiemdinh') loadReports();
+  if (b.dataset.khu === 'lab') loadLab();
+});
+function noiTab(attr, tienTo) {
+  $$('[data-' + attr + ']').forEach(b => b.onclick = () => {
+    const cha = b.closest('.panel');
+    cha.querySelectorAll('[data-' + attr + ']').forEach(x => x.classList.remove('on'));
+    cha.querySelectorAll('.pane').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    const el = document.getElementById(tienTo + b.getAttribute('data-' + attr));
+    if (el) el.classList.add('on');
+    if (b.getAttribute('data-' + attr) === 'dudoan') loadDuDoan();
+    if (b.getAttribute('data-' + attr) === 'jobs') loadJobs();
+
+  });
+}
+noiTab('mtab', 'mpane-'); noiTab('mptab', 'mppane-');
+noiTab('tab', 'pane-'); noiTab('ptab', 'ppane-'); noiTab('dtab', 'dpane-');
+noiTab('ktab', 'kpane-'); noiTab('ttab', 'tpane-');
+
+/* ---------- hộp thoại xác nhận ---------- */
+function hoi(tieude, noidung, {nhap = null, nutOk = 'Xác nhận'} = {}) {
+  return new Promise(res => {
+    $('#ht-tieude').textContent = tieude;
+    $('#ht-noidung').innerHTML = noidung;
+    const inp = $('#ht-input');
+    inp.style.display = nhap ? 'block' : 'none';
+    inp.placeholder = nhap || ''; inp.value = '';
+    $('#ht-ok').textContent = nutOk;
+    $('#hopthoai').showModal();
+    const xong = v => { $('#hopthoai').close(); res(v); };
+    $('#ht-ok').onclick = () => xong(nhap ? inp.value : true);
+    $('#ht-huy').onclick = () => xong(null);
+  });
+}
+
+/* ---------- tác vụ một lần ---------- */
+function params(kind) {
+  if (kind === 'download') return {symbol: $('#dl-symbol').value, bars: +$('#dl-bars').value};
+  if (kind === 'backtest') return {symbol: $('#bt-symbol').value, strategy: $('#bt-strategy').value,
+      equity: +$('#bt-equity').value, synthetic: $('#bt-synth').checked,
+      no_regime: $('#bt-noregime').checked};
+  if (kind === 'walkforward') return {symbol: $('#wf-symbol').value, strategy: $('#wf-strategy').value,
+      train_bars: +$('#wf-train').value, test_bars: +$('#wf-test').value,
+      step_bars: +$('#wf-step').value};
+  if (kind === 'hoc') return {symbols: $('#hoc-symbols').value, max_horizon: +$('#hoc-horizon').value,
+      seed: +$('#hoc-seed').value, khong_phai_sinh: $('#hoc-nodev').checked};
+  if (kind === 'meta-hoc') return {chien_luoc: $('#mt-cl').value,
+      symbols: $('#mt-syms').value, max_horizon: +$('#mt-hz').value,
+      seed: +$('#mt-seed').value};
+  if (kind === 'meta-quet') return {chien_luoc: $('#mt-cl').value,
+      symbols: $('#mt-syms').value, max_horizon: +$('#mt-hz').value,
+      so_cua_so: +$('#mq-cs').value, val_bars: +$('#mq-vb').value,
+      seeds: $('#mq-seeds').value};
+  if (kind === 'theo-doi') return {max_horizon: +$('#hoc-horizon').value};
+  if (kind === 'tai-universe') return {top: +$('#ro-top').value, interval: +$('#ro-interval').value};
+  if (kind === 'tai-phai-sinh') return {symbols: $('#dv-symbols').value, interval: +$('#dv-interval').value};
+  if (kind === 'ic-study') return {symbols: $('#nc-symbols').value,
+      interval: +$('#nc-interval').value};
+  if (kind === 'phase0') return {symbols: $('#nc-symbols').value};
+  if (kind === 'quet-hang-rao') return {symbols: $('#nc-symbols').value,
+      interval: +$('#nc-interval').value, nhanh: $('#nc-nhanh').checked};
+  if (kind === 'lab-sinh') return {so_luong: +$('#lab-soluong').value};
+  if (kind === 'lab-kiem-dinh') return {symbols: $('#lab-symbols').value,
+      interval: +$('#lab-interval').value};
+  return {};
+}
+
+$$('[data-run]').forEach(b => b.onclick = async () => {
+  const kind = b.dataset.run;
+  const r = await fetch('/api/run/' + kind, {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(params(kind))});
+  const d = await r.json();
+  if (!r.ok) { alert(d.loi || 'Lỗi không xác định'); return; }
+  jobId = d.id; seen = 0;
+  [$('#console'), $('#console2'), $('#console3'), $('#console4')]
+    .forEach(c => c.textContent = '');
+  $$('[data-run]').forEach(x => x.disabled = true);
+  $('#btn-stop').style.display = 'block';
+  if (kind.startsWith('meta-')) {
+    $$('[data-mptab]').forEach(x => x.classList.remove('on'));
+    $$('#khu-boloc .panel .pane').forEach(x => x.classList.remove('on'));
+    $('[data-mptab="console"]').classList.add('on');
+    $('#mppane-console').classList.add('on');
+  }
+  if (['hoc', 'theo-doi'].includes(kind)) {
+    $$('[data-ptab]').forEach(x => x.classList.remove('on'));
+    $$('#khu-policy .pane').forEach(x => x.classList.remove('on'));
+    $('[data-ptab="console"]').classList.add('on');
+    $('#ppane-console').classList.add('on');
+  }
+  clearInterval(poller); poller = setInterval(poll, 700); poll();
+});
+
+$('#btn-stop').onclick = () => jobId && fetch('/api/job/' + jobId + '/stop', {method: 'POST'});
+
+function dongLog(text) {
+  const el = document.createElement('div');
+  if (text.startsWith('$ ')) el.className = 'cmd';
+  else if (text.startsWith('# ') || text.startsWith('---')) el.className = 'note';
+  else if (/ERROR|CANH BAO|RO RI|TRUOT|Loi |loi |that bai/.test(text)) el.className = 'err';
+  else if (/ DAT$|DAT |Da luu|Da tai|Da sinh|THANG CAP/.test(text)) el.className = 'ok';
+  el.textContent = text;
+  return el;
+}
+function themVao(box, lines) {
+  const stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 40;
+  lines.forEach(t => box.appendChild(dongLog(t)));
+  if (stick) box.scrollTop = box.scrollHeight;
+}
+
+async function poll() {
+  if (!jobId) return;
+  const r = await fetch('/api/job/' + jobId + '?since=' + seen);
+  if (!r.ok) { clearInterval(poller); return; }
+  const d = await r.json();
+  themVao($('#console'), d.lines);
+  themVao($('#console2'), d.lines);
+  themVao($('#console3'), d.lines);
+  themVao($('#console4'), d.lines);
+  seen = d.total_lines;
+  ['', '2', '3', '4'].forEach(s => {
+    $('#job-label' + s).textContent = d.label;
+    $('#job-time' + s).textContent = d.duration + ' giây';
+    $('#dot' + s).className = 'dot ' + (d.status === 'dang_chay' ? 'run'
+      : d.status === 'xong' ? 'ok' : 'err');
+  });
+  if (d.status !== 'dang_chay') {
+    clearInterval(poller);
+    $$('[data-run]').forEach(x => x.disabled = false);
+    $('#btn-stop').style.display = 'none';
+    loadStatus(); loadReports(); loadPolicy(); loadMeta(); loadLab();
+  }
+}
+
+/* ---------- dịch vụ ---------- */
+$('#bot-start').onclick = async () => {
+  let body = {mot_vong: $('#bot-once').checked};
+  let r = await fetch('/api/service/bot/start', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  let d = await r.json();
+  if (r.status === 428) {
+    const go = await hoi('Chạy bằng TIỀN THẬT', '<p>' + esc(d.loi) +
+      '</p><p>Gõ đúng câu sau để tiếp tục:</p><p><code>' + esc(d.cau_xac_nhan) + '</code></p>',
+      {nhap: d.cau_xac_nhan, nutOk: 'Bật bot bằng tiền thật'});
+    if (go === null) return;
+    body.xac_nhan = go;
+    r = await fetch('/api/service/bot/start', {method: 'POST',
+      headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    d = await r.json();
+  }
+  if (!r.ok) { alert(d.loi || 'Không bật được bot'); return; }
+  botSeen = 0; $('#bot-console').textContent = '';
+  loadBot();
+};
+$('#bot-stop').onclick = async () => {
+  await fetch('/api/service/bot/stop', {method: 'POST'});
+  loadBot();
+};
+$('#ob-start').onclick = async () => {
+  const r = await fetch('/api/service/collector/start', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({symbols: $('#ob-symbols').value, depth: +$('#ob-depth').value,
+                          category: $('#ob-cat').value})});
+  const d = await r.json();
+  if (!r.ok) alert(d.loi || 'Không bật được'); else loadStatus();
+};
+$('#ob-stop').onclick = async () => {
+  await fetch('/api/service/collector/stop', {method: 'POST'}); loadStatus();
+};
+
+async function loadBot() {
+  const d = await (await fetch('/api/service/bot?since=' + botSeen)).json();
+  themVao($('#bot-console'), d.lines || []);
+  botSeen = d.total_lines;
+  $('#bot-dot').className = 'dot ' + (d.dang_chay ? 'run' : 'ok');
+  $('#bot-label').textContent = d.dang_chay
+    ? 'Bot đang chạy (pid ' + d.pid + ') — ' + d.ghi_chu : 'Bot chưa chạy';
+  $('#bot-time').textContent = d.dang_chay ? Math.round(d.giay) + ' giây' : '';
+  $('#bot-start').disabled = d.dang_chay;
+  $('#bot-stop').disabled = !d.dang_chay;
+  const p = $('#p-bot');
+  p.style.display = d.dang_chay ? 'inline' : 'none';
+  p.textContent = 'bot đang chạy'; p.className = 'pill dang';
+}
+
+/* ---------- tổng quan ---------- */
+async function loadStatus() {
+  const d = await (await fetch('/api/status')).json();
+  tt = d;
+  const c = d.cau_hinh;
+  veTrangThaiBot(d);
+  $('#p-san').textContent = (c.exchange || 'bybit').toUpperCase();
+  $('#p-net').textContent = c.testnet ? 'testnet' : 'MAINNET';
+  $('#p-net').className = 'pill' + (c.testnet ? '' : ' warn');
+  $('#p-dry').textContent = c.dry_run ? 'dry-run' : 'GỬI LỆNH THẬT';
+  $('#p-dry').className = 'pill' + (c.dry_run ? '' : ' warn');
+  $('#p-cat').textContent = c.category + ' · ' + c.interval + 'm';
+  $('#p-policy').textContent = 'policy: ' + c.policy_mode;
+  $('#p-policy').className = 'pill' + (c.policy_mode === 'active' ? ' warn' : '');
+
+  const nen = d.cache.filter(x => !x.phai_sinh).reduce((a, x) => a + x.bars, 0);
+  const card = (k, v, cls) => '<div class="card"><div class="k">' + k +
+    '</div><div class="v ' + (cls || '') + '">' + v + '</div></div>';
+  /* Thẻ số chỉ hiện thứ ĐANG THAY ĐỔI. Một dãy số bất động — rủi ro mỗi lệnh,
+     phí một vòng — chỉ làm loãng chỗ đáng nhìn; chúng nằm ở tab Cấu hình, nơi
+     người ta tới khi muốn đọc chúng. */
+  const kn = d.ket_noi || {};
+  $('#cards').innerHTML =
+    card('Vốn trên sàn', kn.trang_thai === 'ok'
+         ? (d.db.equity ? d.db.equity.equity.toFixed(2) : 'chưa đọc')
+         : '—', kn.trang_thai === 'ok' ? '' : 'sm') +
+    card('Lệnh đã đóng', d.db.trades ?? 0) +
+    card('Quyết định đã ghi', d.db.decisions ?? 0) +
+    card('Dự đoán policy', d.db.policy_predictions ?? 0) +
+    card('Nến trong cache', nen.toLocaleString('vi')) +
+    card('Mã đã tải', d.cache.filter(x => !x.phai_sinh).length);
+
+  const ob = d.orderbook, sv = d.dich_vu;
+  /* Sàn nào đang chọn thì hỏi khoá của sàn đó. OKX cần thêm passphrase — thiếu
+     nó thì ký request hỏng, và lỗi hiện ra ở tận bước đối soát chứ không phải
+     ở đây, nên phải bắt thiếu ngay tại bảng trạng thái. */
+  const khoaSanDaDat = (d, c) => c.exchange === 'okx'
+    ? !!(d.bi_mat.OKX_API_KEY && d.bi_mat.OKX_API_SECRET && d.bi_mat.OKX_API_PASSPHRASE)
+    : !!(d.bi_mat.BYBIT_API_KEY && d.bi_mat.BYBIT_API_SECRET);
+  /* Mỗi dòng nói ĐÚNG trạng thái của chính nó.
+     Trước đây mọi dòng đều dùng chung nhãn "đang chạy / dừng", kể cả những dòng
+     không phải tiến trình: một khoá API không "chạy". Tệ hơn, dòng khoá chỉ kiểm
+     .env có biến hay chưa, nên một khoá SAI vẫn hiện xanh "đã đặt" — bảng trấn an
+     người dùng về đúng thứ đang chặn họ lại. */
+  /* Thông báo gốc đến từ `bybit_client`, nơi quy ước là tiếng Việt KHÔNG DẤU
+     (để console Windows không vỡ mã). Đổ thẳng nó vào bảng thì giữa một giao
+     diện có dấu sẽ hiện ra một dòng trông như lỗi hiển thị. Bảng hiện câu sạch
+     theo trạng thái; nguyên văn của sàn nằm trong tooltip cho ai cần tra. */
+  const KET_NOI_NHAN = {
+    ok:             ['tot',  'kết nối được',      'gọi được cả giá lẫn số dư'],
+    chua_co_khoa:   ['xau',  'chưa có khoá',      'chưa dán khoá vào .env'],
+    khoa_sai:       ['xau',  'khoá không hợp lệ', 'sàn không nhận ra khoá này'],
+    thieu_quyen:    ['xau',  'thiếu quyền',       'khoá có thật nhưng không đọc được số dư'],
+    khong_goi_duoc: ['canhbao', 'không gọi được', 'lỗi mạng hoặc sàn không phản hồi'],
+  };
+  const [knCls, knNhan, knMoTa] = KET_NOI_NHAN[kn.trang_thai]
+    || ['canhbao', 'chưa rõ', ''];
+
+  const hang = (ten, cls, nhan, ghi) => '<tr><td>' + ten + '</td><td class="' + cls +
+    '">' + nhan + '</td><td style="text-align:left">' + ghi + '</td></tr>';
+  const chay = ok => ok ? ['tot', 'đang chạy'] : ['xau', 'dừng'];
+
+  const champ = (d.policy_champion || null);
+  const policyNhan = c.policy_mode === 'off' ? ['fg3', 'tắt']
+    : (champ ? ['tot', 'đang chạy'] : ['canhbao', 'bật nhưng rỗng']);
+
+  $('#tq-trangthai').innerHTML = '<table>' +
+    hang('Bot giao dịch', ...chay(sv.bot.dang_chay), sv.bot.ghi_chu || '—') +
+    hang('Thu thập sổ lệnh', ...chay(ob.dang_ghi),
+         ob.co_du_lieu ? (ob.so_dong.toLocaleString('vi') + ' dòng · ' + ob.so_ngay + ' ngày')
+                       : 'chưa có dữ liệu') +
+    hang('Kết nối ' + (c.exchange === 'okx' ? 'OKX' : 'Bybit'), knCls, knNhan,
+         '<span title="' + esc(kn.chi_tiet || '') + '">' + knMoTa +
+         (kn.chi_tiet ? ' <span style="color:var(--fg3)">(di chuột để xem nguyên văn)</span>'
+                      : '') + '</span>') +
+    hang('AI policy', ...policyNhan,
+         c.policy_mode === 'off' ? 'không nạp mô hình'
+           : (champ ? 'chế độ ' + c.policy_mode
+                    : 'chế độ ' + c.policy_mode + ' — chưa có mô hình nào qua cổng')) +
+    '</table>';
+
+  /* Xếp theo mức CHẶN, không theo thứ tự viết code. Việc đầu tiên phải là
+     việc mà mọi việc khác đang chờ nó. */
+  const viec = [];
+  const dungSan = c.exchange === 'okx' ? 'OKX' : 'Bybit';
+  const V = (text, o) => viec.push(Object.assign({text: text}, o || {}));
+
+  if (kn.trang_thai === 'chua_co_khoa')
+    V('<b>Chưa có khoá ' + dungSan + '.</b> Thiếu khoá thì bot dừng ngay ở bước ' +
+      'đối soát — mọi việc khác đều đang chờ nó.',
+      {chan: true, tab: 'cauhinh', nhan: 'Dán khoá'});
+  else if (kn.trang_thai === 'khoa_sai')
+    V('<b>Khoá ' + dungSan + ' không hợp lệ</b> — sàn không nhận ra nó. ' +
+      (c.testnet ? 'Khoá testnet phải tạo tại <code>testnet.bybit.com</code>: đó là ' +
+                   'hệ thống riêng với tài khoản riêng, khoá của <code>bybit.com</code> ' +
+                   'không dùng được ở đó. ' : '') + 'Tạo khoá mới rồi dán lại.',
+      {chan: true, tab: 'cauhinh', nhan: 'Dán khoá mới'});
+  else if (kn.trang_thai === 'thieu_quyen')
+    V('<b>Khoá ' + dungSan + ' có thật nhưng không đọc được số dư.</b> Thường là ' +
+      'thiếu quyền đọc Wallet, hoặc tài khoản không phải loại Unified. Sửa quyền ' +
+      'trên chính khoá đó — <b>không</b> cần tạo khoá mới.',
+      {chan: true, tab: 'cauhinh', nhan: 'Thử lại kết nối'});
+  else if (kn.trang_thai === 'khong_goi_duoc')
+    V('Không gọi được ' + dungSan + ': ' + esc(kn.chi_tiet || '') +
+      ' — thường là mạng, thử lại sau.', {tab: 'cauhinh', nhan: 'Thử lại'});
+  else if (kn.trang_thai === 'ok' && !sv.bot.dang_chay)
+    V('<b>Kết nối sàn đã thông.</b> Chưa có gì chặn nữa — bật bot để nó chạy vòng ' +
+      'quyết định đầu tiên. Đang ở <code>dry-run</code> nên nó ghi sổ chứ không gửi lệnh.',
+      {tab: 'bot', nhan: 'Bật bot'});
+  if (!ob.dang_ghi)
+    V('Bộ thu thập sổ lệnh <b>không chạy</b>. Đây là nguồn dữ liệu duy nhất không ' +
+      'tải lại được — mỗi giờ không thu là mất vĩnh viễn.',
+      {tab: 'dulieu', nhan: 'Bật thu thập'});
+  if (c.symbols.length < 8 && c.policy_mode !== 'off')
+    V('Chỉ theo dõi ' + c.symbols.length + ' mã nhưng policy đang bật. Đặc trưng xếp ' +
+      'hạng cắt ngang cần ≥8 mã, dưới mức đó policy sẽ từ chối có ý kiến — tức là ' +
+      'nó bật mà không làm gì.', {tab: 'cauhinh', nhan: 'Sửa SYMBOLS'});
+  if (nen === 0)
+    V('Chưa có dữ liệu nào trong cache.', {tab: 'dulieu', nhan: 'Tải dữ liệu'});
+  veViec(viec);
+
+  const log = $('#tq-log');
+  log.textContent = '';
+  themVao(log, d.log.length ? d.log : ['(logs/bot.log trống)']);
+  log.scrollTop = log.scrollHeight;
+
+  $('#ob-trangthai').innerHTML = ob.co_du_lieu
+    ? '<div class="note' + (ob.dang_ghi ? '' : ' canh') + '"><b>' +
+      (ob.dang_ghi ? 'Đang thu thập' : 'Đã dừng') + '.</b> ' + esc(ob.tep) + ' · ' +
+      ob.so_dong.toLocaleString('vi') + ' dòng · ghi lần cuối ' +
+      ob.giay_tu_lan_ghi_cuoi + ' giây trước.</div>'
+    : '<div class="note canh"><b>Chưa có dữ liệu sổ lệnh.</b></div>';
+
+  const ct = d.cache.filter(x => !x.phai_sinh);
+  const co_deriv = new Set(d.cache.filter(x => x.phai_sinh)
+    .map(x => x.symbol.replace('_deriv', '')));
+  $('#cache-bang').innerHTML = ct.length ? '<table><tr><th>Mã</th><th>Khung</th>' +
+    '<th>Nến</th><th>Funding/OI</th><th>Cập nhật</th></tr>' +
+    ct.map(x => '<tr><td>' + x.symbol + '</td><td>' + x.interval + '</td><td>' +
+      x.bars.toLocaleString('vi') + '</td><td>' +
+      (co_deriv.has(x.symbol) ? '<span class="tot">có</span>' : '—') + '</td><td>' +
+      x.updated + '</td></tr>').join('') + '</table>'
+    : '<p class="empty">Cache trống.</p>';
+}
+
+/* ---------- policy ---------- */
+async function loadPolicy() {
+  const d = await (await fetch('/api/policy')).json();
+  policyData = d;
+  $('#policy-mode').value = d.che_do;
+
+  const kq = d.ket_qua_that || {};
+  const card = (k, v, cls) => '<div class="card"><div class="k">' + k +
+    '</div><div class="v ' + (cls || '') + '">' + v + '</div></div>';
+  const champMeta = d.phien_ban.find(x => x.la_champion);
+  $('#policy-cards').innerHTML =
+    card('Chế độ', d.che_do, d.che_do === 'active' ? 'canhbao' : '') +
+    card('Champion', d.champion ? 'có' : 'không', d.champion ? 'tot' : '') +
+    card('Phiên bản đã lưu', d.phien_ban.length) +
+    card('Qua cổng', d.phien_ban.filter(x => x.cong_dat).length,
+         d.phien_ban.some(x => x.cong_dat) ? 'tot' : '') +
+    card('AUC champion', champMeta ? so(champMeta.auc, 3) : '—', 'sm') +
+    card('Lệnh thật đã chấm', kq.so_lenh ?? 0, 'sm') +
+    card('Kỳ vọng thật', kq.so_lenh ? so(kq.loi_nhuan_tb) : '—',
+         kq.so_lenh ? (kq.loi_nhuan_tb > 0 ? 'sm tot' : 'sm xau') : 'sm');
+
+  const n = d.nguong;
+  const dg = (v, ok) => '<span class="' + (v === null || v === undefined ? '' :
+    ok ? 'tot' : 'xau') + '">' + so(v, 3) + '</span>';
+  $('#policy-bang').innerHTML = d.phien_ban.length ? '<div class="cuon"><table>' +
+    '<tr><th>Phiên bản</th><th>AUC</th><th>xáo</th><th>IC</th><th>t</th>' +
+    '<th>kỳ vọng</th><th>lệnh</th><th>cổng</th></tr>' +
+    d.phien_ban.map(x => '<tr class="' + (x.la_champion ? 'chon' : '') +
+      '" data-pb="' + x.phien_ban + '" style="cursor:pointer">' +
+      '<td>' + (x.la_champion ? '★ ' : '') + x.phien_ban.slice(0, 22) + '</td>' +
+      '<td>' + dg(x.auc, x.auc >= n.auc_min && x.auc <= n.auc_max) + '</td>' +
+      '<td>' + dg(x.auc_xao, x.auc_xao <= n.xao_auc_max) + '</td>' +
+      '<td>' + dg(x.ic, x.ic >= n.ic_min) + '</td>' +
+      '<td>' + dg(x.ic_t, x.ic_t >= n.ic_t_min) + '</td>' +
+      '<td>' + so(x.ky_vong) + '</td><td>' + (x.so_lenh ?? '—') + '</td>' +
+      '<td class="' + (x.cong_dat ? 'tot' : 'xau') + '">' +
+      (x.cong_dat ? 'ĐẠT' : 'trượt') + '</td></tr>').join('') + '</table></div>' +
+    '<p class="hint">Bấm một dòng để đọc thẻ mô hình. Ngưỡng: AUC ∈ [' + n.auc_min +
+    ', ' + n.auc_max + '] · nhãn xáo ≤ ' + n.xao_auc_max + ' · IC ≥ ' + n.ic_min +
+    ' · t ≥ ' + n.ic_t_min + '</p>'
+    : '<p class="empty">Chưa có phiên bản nào.<br>Chạy một vòng học để tạo.</p>';
+
+  $$('#policy-bang tr[data-pb]').forEach(tr => tr.onclick = () => xemThe(tr.dataset.pb));
+
+  const tc = d.thong_tin_champion || {};
+  const lech = d.champion && d.van_tay_hien_tai &&
+    champMeta && d.van_tay_hien_tai !== champMeta.dau_van_tay;
+  $('#policy-champion').innerHTML = d.champion
+    ? '<div class="note' + (lech ? ' canh' : '') + '"><b>' + esc(d.champion) + '</b><br>' +
+      esc(tc.ly_do || '') + (tc.truoc_do ? '<br>lùi được về: ' + esc(tc.truoc_do) : '') +
+      (lech ? '<br><b class="canhbao">Dấu vân tay lệch với cấu hình hiện tại — ' +
+        'policy đang TỪ CHỐI mô hình này. Ai đó đã đổi ATR_STOP_MULT / ATR_TP_MULT / ' +
+        'KLINE_INTERVAL sau khi huấn luyện.</b>' : '') + '</div>'
+    : '<div class="note">Chưa có champion. Bot chạy thuần chiến lược luật.</div>';
+
+  $('#policy-sukien').innerHTML = d.su_kien.length ? '<div class="cuon"><table>' +
+    '<tr><th>Lúc</th><th>Loại</th><th>Phiên bản</th><th>Lý do</th></tr>' +
+    d.su_kien.map(e => '<tr><td>' + esc(e.thoi_diem) + '</td><td class="' +
+      (e.loai === 'thang_cap' ? 'tot' : /ha_cap|ro_ri/.test(e.loai) ? 'xau' : '') + '">' +
+      esc(e.loai) + '</td><td>' + esc((e.phien_ban || '').slice(0, 22)) + '</td><td>' +
+      esc((e.ly_do || '').slice(0, 60)) + '</td></tr>').join('') + '</table></div>'
+    : '<p class="empty">Chưa có sự kiện.</p>';
+}
+
+async function xemThe(pb) {
+  $$('[data-ptab]').forEach(x => x.classList.remove('on'));
+  $$('#khu-policy .panel .pane').forEach(x => x.classList.remove('on'));
+  $('[data-ptab="the"]').classList.add('on');
+  $('#ppane-the').classList.add('on');
+  $('#policy-the').innerHTML = '<p class="empty">Đang tải…</p>';
+
+  const d = await (await fetch('/api/policy/the/' + encodeURIComponent(pb))).json();
+  if (d.loi) { $('#policy-the').innerHTML = '<p class="empty">' + esc(d.loi) + '</p>'; return; }
+  const dat = (d.meta || {}).cong_dat;
+  $('#policy-the').innerHTML =
+    '<div class="taghop" style="margin:0 0 14px">' +
+    '<button class="go nho" id="the-thangcap">Thăng cấp phiên bản này</button>' +
+    '<span class="pill' + (dat ? '' : ' warn') + '">' + (dat ? 'qua cổng' : 'trượt cổng') +
+    '</span></div>' + md(d.the || '(không có thẻ)');
+  $('#the-thangcap').onclick = () => thangCap(pb, dat);
+}
+
+async function thangCap(pb, dat) {
+  let body = {phien_ban: pb, ly_do: ''};
+  if (!dat) {
+    const go = await hoi('Thăng cấp mô hình TRƯỢT cổng',
+      '<p>Phiên bản <code>' + esc(pb) + '</code> không qua cổng thống kê lúc huấn luyện.</p>' +
+      '<p>Thăng cấp nó là hành động có chủ đích và sẽ được ghi vào nhật ký sự kiện ' +
+      'kèm dấu "ÉP THĂNG CẤP". Lý do:</p>',
+      {nhap: 'ví dụ: thử đường ống trên testnet', nutOk: 'Ép thăng cấp'});
+    if (go === null) return;
+    body.toi_chac_chan = true; body.ly_do = go;
+  }
+  const r = await fetch('/api/policy/thang-cap', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const d = await r.json();
+  if (!r.ok) { alert(d.loi || 'Không thăng cấp được'); return; }
+  loadPolicy();
+}
+
+$('#policy-hacap').onclick = async () => {
+  const go = await hoi('Hạ cấp champion',
+    '<p>Champion sẽ lùi về phiên bản trước, hoặc về <b>không có mô hình nào</b> nếu ' +
+    'không còn đường lui. Bot vẫn chạy bình thường bằng chiến lược luật.</p>',
+    {nutOk: 'Hạ cấp'});
+  if (go === null) return;
+  await fetch('/api/policy/ha-cap', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ly_do: $('#policy-lydo').value})});
+  loadPolicy();
+};
+
+$('#policy-mode-luu').onclick = async () => {
+  const moi = $('#policy-mode').value;
+  if (moi === 'active') {
+    const go = await hoi('Bật policy ở chế độ active',
+      '<p>Ở <code>active</code>, mô hình trở thành một nguồn tín hiệu bình thường và ' +
+      '<b>tự phát lệnh</b> qua ensemble.</p><p>Bước đúng trước đó là chạy ' +
+      '<code>shadow</code> vài tuần và đối chiếu kết quả thật với số liệu kiểm định.</p>',
+      {nutOk: 'Vẫn bật active'});
+    if (go === null) return;
+  }
+  await luuCauHinh({POLICY_MODE: moi});
+  loadPolicy(); loadStatus();
+};
+
+async function loadDuDoan() {
+  const d = await (await fetch('/api/policy/du-doan')).json();
+  $('#policy-dudoan').innerHTML = d.length ? '<div class="cuon"><table>' +
+    '<tr><th>Lúc</th><th>Mã</th><th>Quyết định</th><th>p_long</th><th>EV</th>' +
+    '<th>Kết quả</th></tr>' +
+    d.map(x => '<tr><td>' + gio(x.ts).slice(0, 17) + '</td><td>' + esc(x.symbol) +
+      '</td><td>' + esc(x.action) + '</td><td>' + so(x.p_long, 3) + '</td><td>' +
+      so(x.ev_long) + '</td><td class="' + (x.nhan_xong ?
+        (x.ret_thuc > 0 ? 'tot' : x.ret_thuc < 0 ? 'xau' : '') : '') + '">' +
+      (x.nhan_xong ? so(x.ret_thuc) : 'chưa chấm') + '</td></tr>').join('') +
+    '</table></div><p class="hint">Ghi cả những lần policy nói HOLD, kèm kết quả ' +
+    'phản thực tế. Chỉ ghi lúc vào lệnh là thiên lệch chọn mẫu.</p>'
+    : '<p class="empty">Chưa có dự đoán nào.<br>Bật <code>POLICY_MODE=shadow</code> ' +
+      'và chạy bot thì bảng này mới có dữ liệu.</p>';
+}
+
+/* markdown tối giản, đủ cho thẻ mô hình */
+function md(s) {
+  const esc2 = esc(s);
+  const dong = esc2.split('\n');
+  let ra = [], trong_pre = false, trong_bang = false, trong_ul = false;
+  const dong_bang = l => l.trim().startsWith('|');
+  for (const l of dong) {
+    if (l.trim().startsWith('```')) {
+      if (trong_bang) { ra.push('</table>'); trong_bang = false; }
+      ra.push(trong_pre ? '</pre>' : '<pre>'); trong_pre = !trong_pre; continue;
+    }
+    if (trong_pre) { ra.push(l); continue; }
+    if (dong_bang(l)) {
+      const o = l.trim().replace(/^\||\|$/g, '').split('|');
+      if (/^[\s:|-]+$/.test(l)) continue;
+      if (!trong_bang) { ra.push('<table>'); trong_bang = true;
+        ra.push('<tr>' + o.map(c => '<th>' + c.trim() + '</th>').join('') + '</tr>'); continue; }
+      ra.push('<tr>' + o.map(c => '<td>' + c.trim() + '</td>').join('') + '</tr>'); continue;
+    }
+    if (trong_bang) { ra.push('</table>'); trong_bang = false; }
+    if (l.startsWith('- ')) {
+      if (!trong_ul) { ra.push('<ul>'); trong_ul = true; }
+      ra.push('<li>' + inline(l.slice(2)) + '</li>'); continue;
+    }
+    if (trong_ul) { ra.push('</ul>'); trong_ul = false; }
+    if (l.startsWith('## ')) ra.push('<h2>' + inline(l.slice(3)) + '</h2>');
+    else if (l.startsWith('# ')) ra.push('<h1>' + inline(l.slice(2)) + '</h1>');
+    else if (l.trim()) ra.push('<p>' + inline(l) + '</p>');
+  }
+  if (trong_bang) ra.push('</table>');
+  if (trong_ul) ra.push('</ul>');
+  if (trong_pre) ra.push('</pre>');
+  return ra.join('\n');
+}
+const inline = s => s.replace(/`([^`]+)`/g, '<code>$1</code>')
+                     .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+
+/* ---------- việc cần làm ---------- */
+/* Mỗi việc đi kèm ĐÍCH ĐẾN. Một danh sách chỉ mô tả vấn đề rồi bảo "vào tab
+   Cấu hình" bắt người đọc tự dịch chữ thành thao tác; nút đưa họ tới thẳng nơi
+   sửa được. `chan: true` là việc đang chặn mọi việc khác — nó lên đầu và đổi màu. */
+function moKhu(ten) {
+  const b = document.querySelector('nav button[data-khu="' + ten + '"]');
+  if (b) { b.click(); window.scrollTo({top: 0, behavior: 'smooth'}); }
+}
+
+function veViec(ds) {
+  const el = $('#tq-viec');
+  if (!ds.length) {
+    el.innerHTML = '<p class="empty">Không có việc gì đang chặn.</p>';
+    return;
+  }
+  ds.sort((a, b) => (b.chan ? 1 : 0) - (a.chan ? 1 : 0));
+  el.innerHTML = ds.map((v, i) =>
+    '<div class="viec' + (v.chan ? ' gap' : '') + '">' +
+    '<div class="stt">' + (i + 1) + '</div><div class="noi">' + v.text +
+    (v.tab ? '<br><button class="go nho phu" data-di="' + v.tab + '">' +
+             (v.nhan || 'Mở tab') + ' →</button>' : '') +
+    '</div></div>').join('');
+  el.querySelectorAll('[data-di]').forEach(b => b.onclick = () => moKhu(b.dataset.di));
+}
+
+/* ---------- bộ lọc meta ---------- */
+async function loadMeta() {
+  const d = await (await fetch('/api/meta')).json();
+  const n = d.nguong_cong;
+  if (!$('#mt-cl').value) $('#mt-cl').value = (d.chien_luoc_mac_dinh || []).join(',');
+
+  const champMeta = d.phien_ban.find(x => x.la_champion);
+  const card = (k, v, cls) => '<div class="card"><div class="k">' + k +
+    '</div><div class="v ' + (cls || '') + '">' + v + '</div></div>';
+  const tot = d.phien_ban.length
+    ? so(Math.max.apply(null, d.phien_ban.map(x => x.ky_vong == null ? -9 : x.ky_vong)))
+    : '—';
+  $('#meta-cards').innerHTML =
+    card('Champion', d.champion ? 'có' : 'không', d.champion ? 'tot' : '') +
+    card('Phiên bản đã lưu', d.phien_ban.length) +
+    card('Qua cổng', d.phien_ban.filter(x => x.cong_dat).length,
+         d.phien_ban.some(x => x.cong_dat) ? 'tot' : '') +
+    card('Lọc tín hiệu của', (d.chien_luoc_mac_dinh || []).join(', ') || '—', 'sm') +
+    card('Kỳ vọng tốt nhất', champMeta ? so(champMeta.ky_vong) : tot, 'sm');
+
+  const mau = d.phien_ban[0];
+  $('#meta-giai-thich').innerHTML = mau
+    ? '<b>Mốc so sánh là "nghe hết mọi tín hiệu", không phải AUC 0.5.</b><br>' +
+      'Trên toàn lịch sử, tín hiệu thô của ' + esc((mau.chien_luoc_nguon || []).join(', ')) +
+      ' lãi ' + so(mau.ty_le_lai_co_so, 4) + ' số lần, và hoà vốn đòi ' +
+      so(mau.p_hoa_von, 4) + ' — tính từ biên độ thắng/thua <i>thực</i>, không từ tỷ lệ ' +
+      'barrier. Một bộ lọc chỉ có giá trị nếu cột <b>có lọc</b> hơn hẳn cột ' +
+      '<b>không lọc</b>: AUC đẹp mà kỳ vọng không hơn thì nó chỉ là một lớp phức tạp ' +
+      'thêm vào, làm ta tưởng mình đang được bảo vệ.'
+    : '<b>Chưa có bộ lọc nào.</b> Tín hiệu của chiến lược luật đi tiếp nguyên vẹn. ' +
+      'Bấm "Huấn luyện một bộ lọc" để tạo phiên bản đầu tiên.';
+
+  const dg = (v, ok) => '<span class="' + (v == null ? '' : (ok ? 'tot' : 'xau')) +
+    '">' + so(v, 3) + '</span>';
+  $('#meta-bang').innerHTML = d.phien_ban.length ? '<div class="cuon"><table>' +
+    '<tr><th>Phiên bản</th><th>AUC</th><th>xáo</th><th>kỳ vọng</th><th>không lọc</th>' +
+    '<th>giữ</th><th>PF</th><th>cổng</th></tr>' +
+    d.phien_ban.map(x => '<tr class="' + (x.la_champion ? 'chon' : '') +
+      '" data-mpb="' + x.phien_ban + '" style="cursor:pointer">' +
+      '<td>' + (x.la_champion ? '★ ' : '') + x.phien_ban.slice(0, 20) + '</td>' +
+      '<td>' + dg(x.auc, x.auc >= n.auc_min && x.auc <= n.auc_max) + '</td>' +
+      '<td>' + dg(x.auc_xao, x.auc_xao <= n.xao_auc_max) + '</td>' +
+      '<td>' + dg(x.ky_vong, x.ky_vong > n.ky_vong_min) + '</td>' +
+      '<td>' + so(x.ky_vong_khong_loc) + '</td>' +
+      '<td>' + dg(x.ty_le_giu, x.ty_le_giu >= n.ty_le_giu_min &&
+                  x.ty_le_giu <= n.ty_le_giu_max) + '</td>' +
+      '<td>' + so(x.pf, 2) + '</td>' +
+      '<td class="' + (x.cong_dat ? 'tot' : 'xau') + '">' +
+      (x.cong_dat ? 'ĐẠT' : 'trượt') + '</td></tr>').join('') + '</table></div>' +
+    '<p class="hint">Bấm một dòng để đọc thẻ. Cổng: AUC ∈ [' + n.auc_min + ', ' +
+    n.auc_max + '] · nhãn xáo ≤ ' + n.xao_auc_max + ' · giữ ∈ [' + n.ty_le_giu_min +
+    ', ' + n.ty_le_giu_max + '] · hơn "không lọc" ≥ ' + n.cai_thien_min + '</p>'
+    : '<p class="empty">Chưa có phiên bản nào.</p>';
+  $$('#meta-bang tr[data-mpb]').forEach(tr =>
+    tr.onclick = () => xemTheMeta(tr.dataset.mpb));
+
+  const tc = d.thong_tin_champion || {};
+  $('#meta-champion').innerHTML = d.champion
+    ? '<div class="note"><b>' + esc(d.champion) + '</b><br>' + esc(tc.ly_do || '') +
+      (tc.truoc_do ? '<br>lùi được về: ' + esc(tc.truoc_do) : '') + '</div>'
+    : '<div class="note">Chưa có champion. Tín hiệu đi tiếp nguyên vẹn.</div>';
+
+  $('#meta-sukien').innerHTML = d.su_kien.length ? '<div class="cuon"><table>' +
+    '<tr><th>Lúc</th><th>Loại</th><th>Phiên bản</th><th>Lý do</th></tr>' +
+    d.su_kien.map(e => '<tr><td>' + esc(e.thoi_diem) + '</td><td class="' +
+      (e.loai === 'thang_cap' ? 'tot' : (/ha_cap|ro_ri/.test(e.loai) ? 'xau' : '')) +
+      '">' + esc(e.loai) + '</td><td>' + esc((e.phien_ban || '').slice(0, 20)) +
+      '</td><td>' + esc((e.ly_do || '').slice(0, 50)) + '</td></tr>').join('') +
+    '</table></div>' : '<p class="empty">Chưa có sự kiện.</p>';
+}
+
+async function xemTheMeta(pb) {
+  $$('[data-mptab]').forEach(x => x.classList.remove('on'));
+  $$('#khu-boloc .panel .pane').forEach(x => x.classList.remove('on'));
+  $('[data-mptab="the"]').classList.add('on');
+  $('#mppane-the').classList.add('on');
+  $('#meta-the').innerHTML = '<p class="empty">Đang tải…</p>';
+
+  const d = await (await fetch('/api/meta/the/' + encodeURIComponent(pb))).json();
+  if (d.loi) { $('#meta-the').innerHTML = '<p class="empty">' + esc(d.loi) + '</p>'; return; }
+  const dat = (d.meta || {}).cong_dat;
+  $('#meta-the').innerHTML =
+    '<div class="taghop" style="margin:0 0 14px">' +
+    '<button class="go nho" id="mthe-tc">Thăng cấp bộ lọc này</button>' +
+    '<span class="pill' + (dat ? '' : ' warn') + '">' + (dat ? 'qua cổng' : 'trượt cổng') +
+    '</span></div>' + md(d.the || '(không có thẻ)');
+  $('#mthe-tc').onclick = () => thangCapMeta(pb, dat);
+}
+
+async function thangCapMeta(pb, dat) {
+  const body = {phien_ban: pb, ly_do: ''};
+  if (!dat) {
+    const go = await hoi('Thăng cấp bộ lọc TRƯỢT cổng',
+      '<p>Bộ lọc <code>' + esc(pb) + '</code> không qua cổng thống kê.</p>' +
+      '<p>Thăng cấp nó là đặt một mô hình chưa chứng minh được gì vào đường đi của ' +
+      'lệnh thật, nơi nó được phép <b>chặn</b> tín hiệu. Việc này được ghi vào nhật ' +
+      'ký kèm dấu "ÉP THĂNG CẤP". Lý do:</p>',
+      {nhap: 'ví dụ: thử đường ống trên testnet', nutOk: 'Ép thăng cấp'});
+    if (go === null) return;
+    body.toi_chac_chan = true;
+    body.ly_do = go;
+  }
+  const r = await fetch('/api/meta/thang-cap', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const d = await r.json();
+  if (!r.ok) { alert(d.loi || 'Không thăng cấp được'); return; }
+  loadMeta();
+}
+
+$('#meta-hacap').onclick = async () => {
+  const go = await hoi('Hạ cấp bộ lọc',
+    '<p>Champion lùi về phiên bản trước, hoặc về <b>không có bộ lọc nào</b>. ' +
+    'Tín hiệu của chiến lược luật sẽ đi tiếp nguyên vẹn.</p>', {nutOk: 'Hạ cấp'});
+  if (go === null) return;
+  await fetch('/api/meta/ha-cap', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ly_do: $('#meta-lydo').value})});
+  loadMeta();
+};
+
+/* ---------- theo dõi ---------- */
+async function loadMonitor() {
+  const d = await (await fetch('/api/monitor')).json();
+  if (!d.co_db) {
+    ['trades', 'decisions', 'orders', 'equity'].forEach(k =>
+      $('#td-' + k).innerHTML = '<p class="empty">Chưa có database.</p>');
+    return;
+  }
+  const bang = (rows, cot, ve) => rows.length
+    ? '<div class="cuon"><table><tr>' + cot.map(c => '<th>' + c + '</th>').join('') +
+      '</tr>' + rows.map(ve).join('') + '</table></div>'
+    : '<p class="empty">Chưa có dữ liệu.</p>';
+
+  $('#td-trades').innerHTML = bang(d.trades,
+    ['Mã', 'Chiến lược', 'Hướng', 'Vào', 'Ra', 'Lãi/lỗ', 'Thoát'],
+    x => '<tr><td>' + esc(x.symbol) + '</td><td>' + esc(x.strategy || '') + '</td><td>' +
+      esc(x.side || '') + '</td><td>' + so(x.entry_price, 2) + '</td><td>' +
+      so(x.exit_price, 2) + '</td><td class="' + (x.pnl >= 0 ? 'tot' : 'xau') + '">' +
+      so(x.pnl, 2) + '</td><td>' + esc(x.exit_reason || '') + '</td></tr>');
+
+  $('#td-decisions').innerHTML = bang(d.decisions,
+    ['Lúc', 'Mã', 'Regime', 'Quyết định', 'Độ mạnh', 'Đã vào', 'Lý do'],
+    x => '<tr><td>' + gio(x.ts).slice(0, 17) + '</td><td>' + esc(x.symbol) + '</td><td>' +
+      esc(x.regime || '') + '</td><td>' + esc(x.action) + '</td><td>' + so(x.strength, 2) +
+      '</td><td>' + (x.executed ? '<span class="tot">có</span>' : '—') +
+      '</td><td style="text-align:left;max-width:340px">' +
+      esc((x.reason || '').slice(0, 90)) + '</td></tr>');
+
+  $('#td-orders').innerHTML = bang(d.orders,
+    ['Lúc', 'Mã', 'Hướng', 'KL', 'Giá', 'Stop', 'TP', 'Chế độ', 'Trạng thái'],
+    x => '<tr><td>' + gio(x.ts).slice(0, 17) + '</td><td>' + esc(x.symbol) + '</td><td>' +
+      esc(x.side) + '</td><td>' + so(x.qty, 4) + '</td><td>' + so(x.price, 2) + '</td><td>' +
+      so(x.stop_loss, 2) + '</td><td>' + so(x.take_profit, 2) + '</td><td>' +
+      (x.dry_run ? 'dry-run' : '<span class="canhbao">THẬT</span>') + '</td><td>' +
+      esc(x.status || '') + '</td></tr>');
+
+  $('#td-equity').innerHTML = bang(d.equity.slice().reverse(),
+    ['Lúc', 'Vốn', 'Heat', 'Vị thế mở'],
+    x => '<tr><td>' + gio(x.ts).slice(0, 17) + '</td><td>' + so(x.equity, 2) + '</td><td>' +
+      so((x.heat || 0) * 100, 2) + '%</td><td>' + (x.open_positions ?? 0) + '</td></tr>');
+}
+
+async function loadJobs() {
+  const d = await (await fetch('/api/jobs')).json();
+  $('#td-jobs').innerHTML = d.length ? '<table><tr><th>Lúc</th><th>Tác vụ</th>' +
+    '<th>Trạng thái</th><th>Giây</th></tr>' +
+    d.map(j => '<tr><td>' + esc(j.started) + '</td><td>' + esc(j.label) + '</td><td class="' +
+      (j.status === 'xong' ? 'tot' : j.status === 'loi' ? 'xau' : '') + '">' +
+      esc(j.status) + '</td><td>' + j.duration + '</td></tr>').join('') + '</table>'
+    : '<p class="empty">Chưa chạy tác vụ nào trong phiên này.</p>';
+}
+
+async function loadReports() {
+  const d = await (await fetch('/api/reports')).json();
+  $('#reports-body').innerHTML = d.length
+    ? '<table><tr><th>Báo cáo</th><th>Lúc</th><th>KB</th></tr>' +
+      d.map(r => '<tr><td><a href="/report/' + encodeURIComponent(r.name) +
+        '" target="_blank">' + esc(r.name) + '</a></td><td>' + r.created + '</td><td>' +
+        r.size_kb + '</td></tr>').join('') + '</table>'
+    : '<p class="empty">Chưa có báo cáo.</p>';
+}
+
+/* ---------- trạng thái bên trong bot ---------- */
+function veTrangThaiBot(d) {
+  const t = d.bot_trang_thai;
+  const hop = $('#bot-noitai');
+  if (!t || !t.co) { hop.innerHTML = '<p class="empty">Bot chưa ghi nhịp tim nào.</p>'; return; }
+  const cu = t.giay_tu_nhip_cuoi > 900;
+  hop.innerHTML = '<table>' +
+    '<tr><td>Circuit breaker</td><td class="' + (t.breaker_ngat ? 'xau' : 'tot') + '">' +
+      (t.breaker_ngat ? 'ĐANG NGẮT' : 'bình thường') + '</td><td>' +
+      esc(t.breaker_ly_do || '—') + '</td></tr>' +
+    '<tr><td>Vị thế đang mở</td><td>' + t.so_vi_the + '</td><td>heat ' +
+      (100 * (t.heat || 0)).toFixed(2) + '%</td></tr>' +
+    '<tr><td>Vốn</td><td>' + (t.equity == null ? '—' : t.equity.toFixed(2)) +
+      '</td><td></td></tr>' +
+    '<tr><td>Chiến lược chạy bóng</td><td colspan="2">' +
+      (t.chien_luoc_bong || '—') + '</td></tr>' +
+    '<tr><td>Nhịp tim cuối</td><td class="' + (cu ? 'canhbao' : '') + '">' +
+      t.giay_tu_nhip_cuoi + ' giây trước</td><td>' +
+      (cu ? 'quá cũ — bot có thể đã dừng' : '') + '</td></tr>' +
+    (t.lenh_dang_cho && t.lenh_dang_cho.length
+      ? '<tr><td>Lệnh đang chờ</td><td colspan="2">' + t.lenh_dang_cho.join(', ') +
+        '</td></tr>' : '') +
+    '</table>';
+}
+
+$$('[data-lenh]').forEach(b => b.onclick = async () => {
+  const r = await fetch('/api/lenh/' + b.dataset.lenh, {method: 'POST'});
+  const d = await r.json();
+  $('#lenh-kq').innerHTML = r.ok
+    ? '<span class="tot">Đã xếp lệnh — ' + esc(d.ghi_chu) + '</span>'
+    : '<span class="xau">' + esc(d.loi) + '</span>';
+  loadStatus();
+});
+
+/* ---------- kho luật ---------- */
+async function loadKhoLuat() {
+  const d = await (await fetch('/api/kho-luat')).json();
+  const hop = $('#lab-kholuat');
+  if (d.loi) { hop.innerHTML = '<p class="empty">Lỗi đọc kho: ' + esc(d.loi) + '</p>'; return; }
+  if (!d.muc.length) {
+    hop.innerHTML = '<p class="empty">Kho luật trống.<br>' +
+      'Giả thuyết qua được cổng ở bước 2 sẽ tự vào đây ở trạng thái <b>ứng viên</b>.</p>';
+    return;
+  }
+  const nhan = {ung_vien: 'ứng viên', bong: 'bóng', chu_dong: 'chủ động', da_loai: 'đã loại'};
+  const buocTiep = {ung_vien: 'Cho chạy bóng', bong: 'Thăng lên chủ động'};
+  hop.innerHTML = '<table><tr><th>Tên</th><th>Trạng thái</th>' +
+    '<th>Sharpe (kiểm định)</th><th>Ngày chạy bóng</th><th>Bằng chứng chế độ bóng</th>' +
+    '<th>Đang bật</th><th></th></tr>' +
+    d.muc.map(m => {
+      let th = '—';
+      if (m.diem_bong) {
+        const d = m.diem_bong;
+        const kv = d.ky_vong_moi_lenh == null ? null : (100 * d.ky_vong_moi_lenh);
+        th = '<span class="' + (d.du_bang_chung ? 'tot' : 'canhbao') + '">' +
+          (d.du_bang_chung ? 'đủ' : 'chưa đủ') + '</span> · ' +
+          d.so_tin_hieu_da_cham + ' tín hiệu' +
+          (kv == null ? '' : ' · ' + (kv >= 0 ? '+' : '') + kv.toFixed(3) + '%/lệnh') +
+          (d.so_tin_hieu_cho_cham ? ' · ' + d.so_tin_hieu_cho_cham + ' chờ đủ giá' : '');
+      } else if (m.tin_hieu_bong) {
+        th = Object.entries(m.tin_hieu_bong)
+          .filter(([k]) => k !== 'HOLD').map(([k, v]) => k + '=' + v).join(' ') || '—';
+      }
+      const bong = m.trang_thai === 'bong'
+        ? m.ngay_o_bong + '/' + m.ngay_bong_can : '—';
+      return '<tr><td><code>' + esc(m.ten) + '</code>' +
+        (m.mo_ta ? '<br><small style="color:var(--fg3)">' + esc(m.mo_ta) + '</small>' : '') +
+        '</td><td>' + (nhan[m.trang_thai] || m.trang_thai) + '</td><td>' +
+        (m.sharpe_min == null ? '—' : m.sharpe_min.toFixed(2)) + '</td><td>' + bong +
+        '</td><td>' + th + '</td><td class="' + (m.dang_bat ? 'tot' : '') + '">' +
+        (m.dang_bat ? 'có' : '—') + '</td><td style="white-space:nowrap">' +
+        (buocTiep[m.trang_thai]
+          ? '<button class="go nho" data-kl="thang-cap" data-ten="' + esc(m.ten) + '">' +
+            buocTiep[m.trang_thai] + '</button> '
+          : '') +
+        (m.trang_thai !== 'da_loai'
+          ? '<button class="go nho phu" data-kl="ha-cap" data-ten="' + esc(m.ten) + '">Hạ cấp</button>'
+          : '') +
+        '</td></tr>';
+    }).join('') + '</table>' +
+    '<p class="hint">Đường đi: ứng viên → bóng → chủ động → thêm tên vào ' +
+    '<code>ENABLED_STRATEGIES</code> ở tab Cấu hình.<br>' +
+    'Lên <b>chủ động</b> đòi <b>hai</b> thứ, không phải một: đã chạy bóng ≥14 ngày ' +
+    '<i>và</i> đủ bằng chứng (≥20 tín hiệu đã chấm, kỳ vọng mỗi lệnh không âm sau phí). ' +
+    'Chỉ đếm ngày thì 14 ngày im lặng qua cổng y hệt 14 ngày tốt.<br>' +
+    'Thăng lên chủ động còn đòi gõ câu xác nhận. Hạ cấp thì không đòi gì — ' +
+    'đường lui phải luôn thông.</p>';
+  $$('[data-kl]').forEach(b => b.onclick = () => thaoTacKhoLuat(b.dataset.kl, b.dataset.ten));
+}
+
+/* ---------- thao tác kho luật ---------- */
+async function thaoTacKhoLuat(hanh_dong, ten, xac_nhan) {
+  const body = {ten: ten, ly_do: 'thao tác từ bảng điều khiển'};
+  if (xac_nhan) body.xac_nhan = xac_nhan;
+  const r = await fetch('/api/kho-luat/' + hanh_dong, {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const d = await r.json();
+
+  if (r.status === 428) {
+    /* Thăng lên chủ động = cho luật sinh lệnh thật. Đòi gõ đúng câu xác nhận,
+       giống hệt nút bật bot bằng tiền thật. */
+    const go = await hoi('Thăng cấp lên chủ động', esc(d.loi) +
+      '<br><br>Gõ đúng <code>' + d.cau_xac_nhan + '</code> để xác nhận.',
+      {nhap: d.cau_xac_nhan, nutOk: 'Thăng cấp'});
+    if (go) await thaoTacKhoLuat(hanh_dong, ten, go);
+    return;
+  }
+  if (!r.ok) { alert(d.loi || 'Lỗi không xác định'); return; }
+  if (d.nhac) alert(d.nhac);
+  loadKhoLuat(); loadStatus();
+}
+
+/* ---------- Strategy Lab ---------- */
+async function loadLab() {
+  const d = await (await fetch('/api/gia-thuyet')).json();
+  const o = $('#lab-json');
+  if (document.activeElement !== o) o.value = d.noi_dung;
+  $('#lab-so').textContent = d.so_gia_thuyet + ' giả thuyết';
+  $('#lab-bodem').textContent = (d.bo_dem && d.bo_dem.so_lan_thu != null)
+    ? d.bo_dem.so_lan_thu : '—';
+
+  const k = await (await fetch('/api/lab-ket-qua')).json();
+  const hop = $('#lab-ketqua');
+  if (!k.co) { hop.innerHTML = '<p class="empty">Chưa chạy lần nào.</p>'; return; }
+  const kq = (k.ket_qua || []).filter(x => x.hop_le);
+  hop.innerHTML = '<p class="hint" style="margin:0 0 10px">' + esc(k.thoi_diem) +
+    ' · ' + (k.ma || []).join(',') + ' · khung ' + esc(String(k.khung)) +
+    ' · ' + k.so_phep_thu_luy_ke + ' phép thử luỹ kế</p>' +
+    '<table><tr><th>Giả thuyết</th><th>Sharpe thấp nhất</th><th>Ngưỡng</th>' +
+    '<th>Lệnh</th><th>Kết quả</th></tr>' +
+    kq.map(x => '<tr><td><code>' + esc(x.ten) + '</code></td><td class="' +
+      (x.sharpe_min >= x.nguong_da_hieu_chinh ? 'tot' : 'xau') + '">' +
+      x.sharpe_min.toFixed(2) + '</td><td>' + x.nguong_da_hieu_chinh.toFixed(2) +
+      '</td><td>' + x.tong_lenh + '</td><td class="' + (x.qua_cong ? 'tot' : '') + '">' +
+      (x.qua_cong ? 'QUA CỔNG' : 'trượt') + '</td></tr>').join('') + '</table>' +
+    (k.so_qua_cong ? '' : '<p class="hint">Không ý tưởng nào qua cổng — đây là kết quả ' +
+      '<b>thường gặp và đúng</b>. Cổng siết chặt dần theo số phép thử luỹ kế.</p>');
+  loadKhoLuat();
+}
+
+$('#lab-luu').onclick = async () => {
+  const r = await fetch('/api/gia-thuyet', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({noi_dung: $('#lab-json').value})});
+  const d = await r.json();
+  const o = $('#lab-luu-kq');
+  if (!r.ok) {
+    const ct = d.chi_tiet
+      ? Object.entries(d.chi_tiet).map(([i, v]) => 'spec #' + i + ': ' + v).join(' | ')
+      : '';
+    o.innerHTML = '<span class="xau">' + esc(d.loi) + (ct ? ' — ' + esc(ct) : '') + '</span>';
+    return;
+  }
+  o.innerHTML = '<span class="tot">Đã lưu ' + d.so_gia_thuyet + ' giả thuyết.</span>';
+  loadLab();
+};
+
+/* ---------- chọn sàn ---------- */
+const TEN_SAN = {bybit: 'Bybit', okx: 'OKX'};
+
+async function loadSan() {
+  const d = await (await fetch('/api/san')).json();
+  const o = $('#san-chon');
+
+  /* Thẻ sàn: bấm để đổi. Sàn chưa có khoá vẫn chọn được — chọn sàn và nạp khoá
+     là hai việc, ép làm đúng thứ tự chỉ khiến người dùng bí. */
+  o.innerHTML = '<div class="the-san">' + Object.keys(TEN_SAN).map(ma => {
+    const s = d.san[ma], dang = ma === d.dang_chon;
+    return '<button class="san' + (dang ? ' on' : '') + '" data-san="' + ma + '">' +
+      '<b>' + TEN_SAN[ma] + '</b>' +
+      '<span class="' + (s.san_sang ? 'tot' : 'mo') + '">' +
+      (s.san_sang ? '✓ đủ khoá' : 'chưa có khoá') + '</span>' +
+      (dang ? '<span class="pill">đang dùng</span>' : '') + '</button>';
+  }).join('') + '</div>' + _chiTietSan(d);
+
+  $$('[data-san]').forEach(b => b.onclick = () => doiSan(b.dataset.san));
+  $$('[data-san-cfg]').forEach(i => i.onchange = async () => {
+    const kq = await luuCauHinh({[i.dataset.sanCfg]: i.value});
+    if (kq) { await loadSan(); await loadConfig(); }
+  });
+}
+
+function _chiTietSan(d) {
+  const ma = d.dang_chon, s = d.san[ma];
+  const oChon = (khoa, gt, ds) => '<select data-san-cfg="' + khoa + '">' +
+    ds.map(([v, nhan]) => '<option value="' + v + '"' +
+      (v === gt ? ' selected' : '') + '>' + nhan + '</option>').join('') + '</select>';
+
+  let h = '<div class="luoi-san">';
+  h += '<div class="ten">Khoá bắt buộc</div><div>' + s.khoa.map(k =>
+    '<code>' + k.ten + '</code> <span class="' + (k.da_dat ? 'tot' : 'xau') + '">' +
+    (k.da_dat ? '✓' : '✗') + '</span>').join('<br>') + '</div>';
+
+  h += '<div class="ten">Chế độ</div><div>' + oChon(s.khoa_demo, s.demo,
+    [['true', 'Tiền giả — ' + (ma === 'okx' ? 'demo trading' : 'testnet')],
+     ['false', 'TIỀN THẬT — mainnet']]) + '</div>';
+
+  /* OKX_TD_MODE chỉ có nghĩa với hợp đồng; spot luôn là "cash" và OKX không
+     đọc biến này. Hiện nó lúc đang chạy spot là mời người dùng chỉnh một nút
+     không nối với gì. */
+  if (ma === 'okx' && d.category === 'linear')
+    h += '<div class="ten">Margin</div><div>' + oChon('OKX_TD_MODE', s.td_mode,
+      [['cross', 'cross'], ['isolated', 'isolated']]) + '</div>';
+
+  h += '</div>';
+  if (s.demo === 'false')
+    h += '<div class="note canh"><b>Sàn này đang trỏ vào tiền thật.</b> ' +
+         'Lệnh gửi lên là lệnh thật, trừ khi <code>DRY_RUN=true</code>.</div>';
+  if (!s.san_sang)
+    h += '<div class="note">Chưa có khoá thì bot chạy được backtest và tải dữ liệu, ' +
+         'nhưng dừng ở bước đối soát khi bật. Dán khoá ở ô <b>Khoá API</b> bên dưới.</div>';
+  return h;
+}
+
+async function doiSan(ma, xac_nhan) {
+  const o = $('#san-thongbao');
+  const r = await fetch('/api/san/chon', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({san: ma, xac_nhan: !!xac_nhan})});
+  const d = await r.json();
+
+  if (r.status === 409 && d.can_xac_nhan) {
+    /* Không dùng confirm() ở đây: cảnh báo này dài và có số liệu cụ thể, mà
+       confirm() thì bấm Enter là qua. Bắt bấm đúng một nút riêng. */
+    o.innerHTML = '<div class="note canh"><b>Khoan đã.</b><br>' + esc(d.loi) +
+      '<br><br><button class="nho" id="san-ep">Tôi hiểu, cứ đổi sang ' +
+      TEN_SAN[ma] + '</button></div>';
+    $('#san-ep').onclick = () => doiSan(ma, true);
+    return;
+  }
+  if (!r.ok) { o.innerHTML = '<div class="note xau">' + esc(d.loi || 'lỗi không rõ') + '</div>'; return; }
+
+  o.innerHTML = d.da_doi
+    ? '<div class="note tot">Đã chuyển sang <b>' + TEN_SAN[d.dang_chon] + '</b>.' +
+      (d.bot_dang_chay ? '<br><b>Bot đang chạy vẫn ở sàn cũ</b> — nó đọc cấu hình lúc ' +
+       'khởi động. Dừng và bật lại ở tab Bot thì mới sang sàn mới.' : '') + '</div>'
+    : '<div class="note">' + esc(d.ghi_chu) + '</div>';
+  await loadSan(); await loadConfig(); loadStatus();
+}
+
+/* ---------- khoá API + thử kết nối ---------- */
+async function luuBiMat(thay_doi) {
+  const r = await fetch('/api/config/bi-mat', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify({thay_doi})});
+  const d = await r.json();
+  const o = $('#bm-ketqua');
+  if (!r.ok) {
+    /* Lý do từ chối không bao giờ nhắc lại giá trị — nên in thẳng ra được. */
+    o.innerHTML = '<div class="note xau">' + Object.entries(d.loi || {})
+      .map(([k, v]) => '<code>' + k + '</code>: ' + esc(v)).join('<br>') + '</div>';
+    return null;
+  }
+  const phan = [];
+  if (d.da_dat.length) phan.push('Đã đặt: ' + d.da_dat.join(', '));
+  if (d.da_xoa.length) phan.push('Đã xoá: ' + d.da_xoa.join(', '));
+  if (!phan.length) phan.push('Không có gì thay đổi (khoá mới trùng khoá cũ).');
+  await loadConfig();       /* vẽ lại để cột "đã đặt" khớp thực tế, và xoá sạch ô nhập */
+  /* Báo SAU khi vẽ lại: loadConfig() dựng lại cả khối khoá, báo trước thì thông
+     báo bị xoá ngay và người dùng bấm Lưu xong không thấy gì xảy ra. */
+  o.innerHTML = '<div class="note tot">' + phan.join('<br>') +
+    (d.can_khoi_dong_lai ? '<br><b>Bot đang chạy phải khởi động lại mới dùng khoá mới.</b>'
+                         : '') + '</div>';
+  return d;
+}
+
+$('#san-thu').onclick = async () => {
+  const o = $('#san-ketqua');
+  o.innerHTML = '<p class="empty">Đang gọi sàn…</p>';
+  let d;
+  try {
+    d = await (await fetch('/api/san/kiem-tra', {method: 'POST',
+      headers: {'Content-Type': 'application/json'}, body: '{}'})).json();
+  } catch (e) {
+    o.innerHTML = '<div class="note xau">Không gọi được bảng điều khiển: ' + esc(e.message) + '</div>';
+    return;
+  }
+  const hang = (nhan, b) => '<tr><td>' + nhan + '</td><td class="' +
+    (b.ok ? 'tot' : 'xau') + '">' + (b.ok ? '✓' : '✗') + ' ' + esc(b.chi_tiet) + '</td></tr>';
+  /* Hai bước hỏng vì hai lý do khác hẳn nhau, nên tách ra chứ không gộp thành
+     một chữ "lỗi": công khai hỏng là chuyện mạng/tên mã, riêng tư hỏng là
+     chuyện khoá — hai hướng sửa hoàn toàn khác. */
+  o.innerHTML = '<table><tr><td>Sàn</td><td><b>' + esc(d.san.toUpperCase()) + '</b> · ' +
+    esc(d.category) + ' · ' + (d.demo ? 'demo/testnet' : '<b class="xau">TIỀN THẬT</b>') +
+    '</td></tr>' +
+    hang('Công khai (giá)', d.cong_khai) +
+    hang('Riêng tư (số dư)', d.rieng_tu) + '</table>' +
+    /* Thiếu khoá và khoá sai là hai chuyện khác nhau — khuyên nhầm hướng thì
+       người dùng đi kiểm tra passphrase của một khoá còn chưa tồn tại. */
+    (d.thieu_khoa && d.thieu_khoa.length
+      ? '<div class="note">Chưa đặt ' + d.thieu_khoa.map(k => '<code>' + k + '</code>').join(', ')
+        + '. Dán vào ô <b>Khoá API</b> ở trên rồi bấm Lưu khoá, xong thử lại.</div>'
+      : (d.cong_khai.ok && !d.rieng_tu.ok
+        ? '<div class="note">Lấy giá được nhưng lấy số dư thì không — mạng không phải vấn đề, '
+          + 'khoá mới là. Kiểm tra: đúng khoá của sàn đang chọn chưa, passphrase đúng chưa, '
+          + 'khoá có bật quyền đọc không, và khoá demo có trỏ đúng vào tài khoản demo không.</div>'
+        : ''));
+};
+
+/* ---------- cấu hình ---------- */
+async function loadConfig() {
+  const d = await (await fetch('/api/config')).json();
+  /* Bỏ những khoá bảng chọn sàn đã vẽ: cùng một khoá hiện ở hai chỗ thì sửa
+     một chỗ, chỗ kia đứng im, và người dùng không biết chỗ nào đang đúng. */
+  const khoaChung = d.khoa.filter(k => !(d.khoa_san || []).includes(k.khoa));
+  $('#cfg-bang').innerHTML = '<div class="luoi-cfg">' + khoaChung.map(k =>
+    '<div class="ten"><code>' + k.khoa + '</code>' +
+    (k.doi_bai_toan ? ' <span class="pill warn" style="font-size:10px;padding:1px 6px">' +
+      'đổi bài toán</span>' : '') +
+    '<small>' + esc(k.mo_ta) + '</small></div>' +
+    '<div>' + (k.lua_chon
+      ? '<select data-cfg="' + k.khoa + '">' +
+        /* Khoá chưa có trong .env thì KHÔNG được tự chọn giùm giá trị đầu danh
+           sách: ALLOW_SHORT trống mà bị lưu thành "true" là bật bán khống sau
+           một cú bấm Lưu vô hại. Trống = giữ nguyên mặc định trong config.py. */
+        (k.gia_tri ? '' : '<option value="" selected>(chưa đặt — dùng mặc định)</option>') +
+        k.lua_chon.map(v =>
+          '<option value="' + esc(v) + '"' +
+          (v === k.gia_tri ? ' selected' : '') + '>' + esc(v) + '</option>').join('') +
+        '</select>'
+      : '<input data-cfg="' + k.khoa + '" value="' + esc(k.gia_tri) + '">') + '</div>'
+  ).join('') + '</div>' +
+  '<p class="hint">Ô đánh dấu <b>đổi bài toán</b> làm dấu vân tay mô hình lệch đi — ' +
+  'champion hiện tại sẽ bị policy từ chối và phải huấn luyện lại.</p>';
+
+  /* Khoá API: gõ vào được, đọc lại thì không.
+
+     Ô nhập luôn khởi tạo RỖNG, kể cả khi khoá đã đặt — không có giá trị nào để
+     đổ vào, vì server không trả về. Rỗng khi lưu = "không đụng tới khoá này";
+     muốn xoá thì bấm nút Xoá riêng, để một lượt Lưu vô ý không gỡ mất khoá. */
+  const NHOM_KHOA = [
+    ['OKX', ['OKX_API_KEY', 'OKX_API_SECRET', 'OKX_API_PASSPHRASE']],
+    ['Bybit', ['BYBIT_API_KEY', 'BYBIT_API_SECRET']],
+    ['Khác', ['ANTHROPIC_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID']],
+  ];
+  const san = (d.khoa.find(k => k.khoa === 'EXCHANGE') || {}).gia_tri || 'bybit';
+
+  $('#cfg-bimat').innerHTML = NHOM_KHOA.map(([nhom, ds]) => {
+    const dangDung = nhom.toLowerCase() === san;
+    return '<div class="nhom-khoa' + (dangDung ? ' dang-dung' : '') + '">' +
+      '<h3>' + nhom + (dangDung ? ' <span class="pill">đang dùng</span>' : '') + '</h3>' +
+      ds.map(k => {
+        const daDat = d.bi_mat[k];
+        return '<div class="hang-khoa">' +
+          '<label for="bm-' + k + '"><code>' + k + '</code>' +
+          '<span class="' + (daDat ? 'tot' : 'xau') + '">' +
+          (daDat ? '✓ đã đặt' : '✗ chưa đặt') + '</span></label>' +
+          '<input type="password" id="bm-' + k + '" data-bimat="' + k + '" ' +
+          'autocomplete="off" spellcheck="false" placeholder="' +
+          (daDat ? 'để trống = giữ khoá hiện tại' : 'dán khoá vào đây') + '">' +
+          (daDat ? '<button class="phu" data-xoa-khoa="' + k + '">Xoá</button>'
+                 : '<span></span>') +
+          '</div>';
+      }).join('') + '</div>';
+  }).join('') +
+  '<button class="go" id="bm-luu">Lưu khoá</button>';
+
+  $$('[data-xoa-khoa]').forEach(b => b.onclick = async () => {
+    const k = b.dataset.xoaKhoa;
+    if (!confirm('Xoá ' + k + ' khỏi .env?\n\nBot đang chạy sẽ không mất khoá ngay — '
+                 + 'nó giữ bản đã nạp cho tới khi khởi động lại.')) return;
+    await luuBiMat({[k]: ''});
+  });
+  $('#bm-luu').onclick = async () => {
+    const thay_doi = {};
+    $$('[data-bimat]').forEach(i => { if (i.value) thay_doi[i.dataset.bimat] = i.value; });
+    if (!Object.keys(thay_doi).length) {
+      $('#bm-ketqua').innerHTML = '<div class="note">Chưa gõ khoá nào.</div>';
+      return;
+    }
+    await luuBiMat(thay_doi);
+  };
+
+  $('#cfg-chidoc').innerHTML = '<table>' + Object.entries(d.chi_so_chi_doc).map(([k, v]) =>
+    '<tr><td><code>' + k + '</code></td><td>' + v + '</td></tr>').join('') + '</table>';
+}
+
+async function luuCauHinh(thay_doi) {
+  const r = await fetch('/api/config', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify({thay_doi})});
+  const d = await r.json();
+  if (!r.ok) {
+    const ds = Object.entries(d.loi || {}).map(([k, v]) => k + ': ' + v).join('\n');
+    alert('Không lưu được:\n' + (ds || d.loi || 'lỗi không rõ'));
+    return null;
+  }
+  return d;
+}
+
+$('#cfg-luu').onclick = async () => {
+  const thay_doi = {};
+  /* Ô trống = "không đụng tới khoá này", không phải "ghi chuỗi rỗng". Gửi chuỗi
+     rỗng lên sẽ bị validator từ chối và làm hỏng cả lượt lưu nhiều khoá. */
+  $$('[data-cfg]').forEach(i => { const v = i.value.trim(); if (v) thay_doi[i.dataset.cfg] = v; });
+  const d = await luuCauHinh(thay_doi);
+  if (!d) return;
+  const n = Object.keys(d.da_doi).length;
+  let html = n ? '<div class="note"><b>Đã đổi ' + n + ' khoá.</b><br>' +
+    Object.entries(d.da_doi).map(([k, v]) =>
+      '<code>' + k + '</code>: ' + esc(v.cu) + ' → <b>' + esc(v.moi) + '</b>').join('<br>')
+    : '<div class="note">Không có gì thay đổi.';
+  if (d.can_khoi_dong_lai) html += '<br><br><b>Phải dừng và bật lại bot</b> ' +
+    'thì thay đổi mới có hiệu lực.';
+  if (d.doi_bai_toan && d.doi_bai_toan.length) html += '<br><br><b class="canhbao">' +
+    d.doi_bai_toan.join(', ') + ' đã đổi — dấu vân tay mô hình lệch, champion hiện tại ' +
+    'sẽ bị từ chối cho đến khi huấn luyện lại.</b>';
+  $('#cfg-ketqua').innerHTML = html + '</div>';
+  loadStatus();
+};
+
+/* ---------- khởi động ---------- */
+veP4huDe('tongquan');
+loadStatus(); loadBot();
+setInterval(() => { loadStatus(); loadBot(); }, 6000);
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Lenh tao tac vu Windows chay collector nen (chay 1 lan, trong PowerShell thuong):
+
+schtasks /create /tn "AITrade thu thap so lenh" /sc onstart /ru "%USERNAME%" /rl LIMITED /f /tr "\"C:\Users\Admin\Desktop\AITrade\.venv\Scripts\pythonw.exe\" -m research.collect_orderbook --symbols BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,DOGEUSDT,BNBUSDT,LINKUSDT,AVAXUSDT --depth 50 --category linear"
+
+Chay ngay khong can khoi dong lai may:
+schtasks /run /tn "AITrade thu thap so lenh"
+
+Kiem tra:
+schtasks /query /tn "AITrade thu thap so lenh"
+
+Go bo:
+schtasks /delete /tn "AITrade thu thap so lenh" /f

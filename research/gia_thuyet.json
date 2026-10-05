@@ -1,0 +1,150 @@
+[
+  {
+    "ten": "funding_am_sau_long",
+    "mo_ta": "funding am sau + gia tren duong xu huong -> long",
+    "gia_thuyet": "Funding am nghia la phe short dang tra tien cho phe long de giu vi the. Trang thai ton kem nay kho keo dai; neu xu huong dai han van tang thi ap luc dong short co the day gia len.",
+    "long": [
+      [
+        "funding",
+        "<",
+        -0.0001
+      ],
+      [
+        "close",
+        ">",
+        "ema_trend"
+      ]
+    ]
+  },
+  {
+    "ten": "funding_duong_cao_short",
+    "mo_ta": "funding duong cao + gia duoi duong xu huong -> short",
+    "gia_thuyet": "Doi xung cua gia thuyet tren: phe long dong duc va dang tra phi, trong khi xu huong dai han da quay xuong.",
+    "short": [
+      [
+        "funding",
+        ">",
+        0.0003
+      ],
+      [
+        "close",
+        "<",
+        "ema_trend"
+      ]
+    ]
+  },
+  {
+    "ten": "breakout_kem_khoi_luong",
+    "mo_ta": "pha kenh Donchian kem khoi luong bat thuong",
+    "gia_thuyet": "Breakout khong co khoi luong xac nhan thuong la breakout gia. Loc bang vol_ratio de chi lay cu pha co dong tien that di kem.",
+    "long": [
+      [
+        "close",
+        "cat_len",
+        "dc_high"
+      ],
+      [
+        "vol_ratio",
+        ">",
+        1.5
+      ]
+    ]
+  },
+  {
+    "ten": "rsi_cuc_tri_trong_bien",
+    "mo_ta": "RSI qua ban khi ADX thap (thi truong di ngang)",
+    "gia_thuyet": "Mean-reversion chi hoat dong khi khong co xu huong. ADX thap la dieu kien loc ma mean_reversion goc khong co.",
+    "long": [
+      [
+        "rsi",
+        "<",
+        25
+      ],
+      [
+        "adx",
+        "<",
+        20
+      ]
+    ],
+    "short": [
+      [
+        "rsi",
+        ">",
+        75
+      ],
+      [
+        "adx",
+        "<",
+        20
+      ]
+    ]
+  },
+  {
+    "ten": "bien_dong_nen_va_pha",
+    "mo_ta": "bien dong bi nen (ATR% thap) roi gia pha bien tren Bollinger",
+    "gia_thuyet": "Bien dong co tinh cum: giai doan nen thuong ket thuc bang mot cu bung. Vao khi vua pha ra khoi vung nen thay vi duoi theo sau.",
+    "long": [
+      [
+        "atr_pct",
+        "<",
+        0.015
+      ],
+      [
+        "close",
+        "cat_len",
+        "bb_high"
+      ]
+    ]
+  },
+  {
+    "ten": "xu_huong_manh_adx",
+    "mo_ta": "gia tren EMA nhanh, EMA nhanh tren EMA xu huong, ADX > 25",
+    "gia_thuyet": "Trend-following co loc do manh xu huong. Ten cu la \"oi_tang_gia_tang\" nhung luat khong he dung open interest - da doi ten cho khop voi cai no thuc su do.",
+    "long": [
+      [
+        "close",
+        ">",
+        "ema_fast"
+      ],
+      [
+        "ema_fast",
+        ">",
+        "ema_trend"
+      ],
+      [
+        "adx",
+        ">",
+        25
+      ]
+    ]
+  },
+  {
+    "ten": "oi_tang_theo_gia",
+    "mo_ta": "open interest tang > 5% trong 24 nen cung chieu voi gia tren EMA",
+    "gia_thuyet": "OI tang khi gia tang nghia la TIEN MOI vao chieu long, khong phai phe short dang dong vi the. Dong tien moi thuong di tiep mot doan. Day la gia thuyet ma ban truoc dinh thu nhung viet nham thanh mot luat thuan EMA.",
+    "long": [
+      [
+        "oi_chg_24",
+        ">",
+        0.05
+      ],
+      [
+        "close",
+        ">",
+        "ema_trend"
+      ]
+    ],
+    "short": [
+      [
+        "oi_chg_24",
+        ">",
+        0.05
+      ],
+      [
+        "close",
+        "<",
+        "ema_trend"
+      ]
+    ]
+  }
+]

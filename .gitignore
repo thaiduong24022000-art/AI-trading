@@ -1,0 +1,11 @@
+.env
+.env.bak
+.env.tmp
+__pycache__/
+*.pyc
+data/*.db
+data/cache/
+data/reports/
+logs/*.log
+bao_cao_backtest.html
+.venv/
